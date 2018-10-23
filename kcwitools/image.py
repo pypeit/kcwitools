@@ -56,7 +56,7 @@ def build_whitelight(hdr, flux, minwave=3600., maxwave=5500., outfile=None):
     #    whiteim[:, :] += flux[slices[i], :, :]
 
     if outfile is not None:
-        io.write_cube(hdr, whiteim, outfile)
+        io.write_image(hdr, whiteim, outfile)
 
     # Return
     return whiteim
