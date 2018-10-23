@@ -1,18 +1,12 @@
 """ Plotting routines"""
 from __future__ import print_function, absolute_import, division, unicode_literals
+import numpy as np
+from matplotlib import pyplot as plt
 
 ###Display a white light image
-def show_whitelight(infil):
-    wave, flux, hdr = open_kcwi_cube(infil)
-    minwave = 3600.
-    maxwave = 5500.
-    wavedim, ydim, xdim = flux.shape
-    whiteim = np.zeros((ydim, xdim))
-    slices = np.where((wave >= minwave) & (wave <= maxwave))
-    slices = slices[0]
+def show_whitelight(whiteim):
 
-    for i in range(slices.size):
-        whiteim[:, :] += flux[slices[i], :, :]
+    ydim, xdim = whiteim.shape
 
     plt.imshow(np.log10(np.abs(whiteim)), cmap=plt.get_cmap('viridis'))
     plt.xticks(np.arange(0, xdim, 5))

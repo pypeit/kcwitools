@@ -1,5 +1,26 @@
 """ utility routines"""
 from __future__ import print_function, absolute_import, division, unicode_literals
+import numpy as np
+
+
+def build_wave(hdu_hdr):
+    """
+
+    Args:
+        hdu_hdr:
+
+    Returns:
+        wave: ndarray
+
+    """
+    crval3 = hdu_hdr['CRVAL3']
+    crpix3 = hdu_hdr['CRPIX3']
+    cd3_3 = hdu_hdr['CD3_3']
+    wavedim = hdu_hdr['NAXIS3']
+    # Do it
+    wave = crval3 + (crpix3 + np.arange(0, wavedim, 1.0)) * cd3_3
+    # Return
+    return wave
 
 ###Add the CD3_3 and CDELT3 keywords to a cube made by montage
 def fix_kcwi_cube_montage(mosaicfil):

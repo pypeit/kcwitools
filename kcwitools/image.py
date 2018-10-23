@@ -1,5 +1,10 @@
 """ Image generation and manipulation routines"""
 from __future__ import print_function, absolute_import, division, unicode_literals
+import numpy as np
+import pdb
+
+from kcwitools import io
+from kcwitools import utils
 
 ###trim off the crap parts of the KCWI cube
 def kcwi_cube_trim(infil):
@@ -23,6 +28,41 @@ def kcwi_cube_trim_large(infil):
 
     hdu_out = fits.PrimaryHDU(trimflux, header=hdr)
     hdu_out.writeto(outfil, overwrite=True)
+
+
+def build_whitelight(hdr, flux, minwave=3600., maxwave=5500., outfile=None):
+    """
+    Generate a white light image over a range of wavelengths
+
+    Args:
+        hdr: Header
+        flux: ndarray
+        minwave: float, optional
+        maxwave: float, optional
+        outfile: str, optional
+          If provided, write image to disk
+
+    Returns:
+        whiteim: ndarray
+
+    """
+    # Wavelength
+    wave = utils.build_wave(hdr)
+    # Slices
+    slices = np.where((wave >= minwave) & (wave <= maxwave))[0]
+    # Do it
+    whiteim = np.sum(flux[slices,:,:], axis=0)
+    #for i in range(slices.size):
+    #    whiteim[:, :] += flux[slices[i], :, :]
+
+    if outfile is not None:
+        io.write_cube(hdr, whiteim, outfile)
+
+    # Return
+    return whiteim
+
+
+
 
 
 def build_narrowband(zabs, infil, del_wave=2.0, ion='HI', restwave=1215.6701):

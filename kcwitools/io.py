@@ -7,13 +7,12 @@ from astropy.io import fits
 
 def open_kcwi_cube(infil):
     """
-    Open KCWI cube and return a flux cube and wavelength array
+    Open KCWI cube and return a flux cube and the header (which contains the wavelengths)
 
     Args:
         infil:
 
     Returns:
-        wave : ndarray
         flux : ndarray
         hdu_hdr
 
@@ -25,14 +24,21 @@ def open_kcwi_cube(infil):
     # Flux
     flux = hdu['PRIMARY'].data
 
-    # Wavelengths
-    crval3 = hdu_hdr['CRVAL3']
-    crpix3 = hdu_hdr['CRPIX3']
-    cd3_3 = hdu_hdr['CD3_3']
-    wavedim, ydim, xdim = flux.shape
-    wave = crval3 + (crpix3 + np.arange(0, wavedim, 1.0)) * cd3_3
     # Return
-    return wave, flux, hdu_hdr
+    return hdu_hdr, flux
 
 
+def write_cube(hdr, cube, outfile):
+    """
+    Write data cube to disk
 
+    Args:
+        hdr:
+        cube:
+        outfile:
+
+    Returns:
+
+    """
+    hdu_coadd = fits.PrimaryHDU(cube, header=hdr)
+    hdu_coadd.writeto(outfile, overwrite=True)
