@@ -62,26 +62,43 @@ def build_whitelight(hdr, flux, minwave=3600., maxwave=5500., outfile=None):
     return whiteim
 
 
+def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False):
+    """
+    Generate a narrow band image at a given wavelength
 
+    Args:
+        hdr:
+        flux:
+        line: float
+          Wavelength of interest
+        z: float, optional
+          Convert to rest wavelength based on this redshift
+        infil:
+        del_wave: float
+          Width of NB in rest-frame
+        restwave:
 
+    Returns:
+        nbimage: ndarray
 
-def build_narrowband(zabs, infil, del_wave=2.0, ion='HI', restwave=1215.6701):
-    if (ion == 'HI'):
-        restwave = 1215.6701
+    """
+    # Rest wave
+    if z is None:
+        z = 0.
+    # Wavelengths
+    wave = utils.build_wave(hdr)
+    wrest = wave/(1+z)
 
-    wave, flux, hdr = open_kcwi_cube(infil)
     # Work out the slices for the on-band image:
-    slices = np.where((wave >= (1.0 + zabs) * (restwave - del_wave)) &
-                      (wave <= (1.0 + zabs) * (restwave + del_wave)))
-    slices = slices[0]
+    slices = np.abs(wrest - line) < del_wave
 
     # define windows on either side of the slice (watch out for a,b and <= vs <)
     offimage_width = 2. * del_wave
 
-    slice_low = np.where((wave >= (1.0 + zabs) * (restwave - del_wave - offimage_width)) &
-                         (wave < (1.0 + zabs) * (restwave - del_wave)))[0]
-    slice_high = np.where((wave >= (1.0 + zabs) * (restwave + del_wave)) &
-                          (wave < (1.0 + zabs) * (restwave + del_wave + offimage_width)))[0]
+    slice_low = np.where((wrest >= (line - del_wave - offimage_width)) &
+                         (wrest < (line - del_wave)))[0]
+    slice_high = np.where((wrest >= (line + del_wave)) &
+                          (wrest < (line + del_wave + offimage_width)))[0]
 
     # Make the on-band and two off-band images
     nbimage = np.average(flux[slices, :, :], 0)
@@ -89,8 +106,12 @@ def build_narrowband(zabs, infil, del_wave=2.0, ion='HI', restwave=1215.6701):
     low = np.average(flux[slice_low, :, :], 0)
 
     # Average the two off-band images and subtract.
-    offimage = (low + high) / 2.0
-    # nbimage = nbimage - offimage
+    if sub_offimage:
+        offimage = (low + high) / 2.0
+        nbimage -= offimage
+
+    # Return
+    return nbimage
 
 def cube_skysub(fil, skyy1, skyy2, skyx1, skyx2, outfil):
     wave, flux, hdr = open_kcwi_cube(fil)
