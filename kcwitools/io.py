@@ -40,6 +40,16 @@ def write_image(hdr, image, outfile):
     Returns:
 
     """
-    hdu_coadd = fits.PrimaryHDU(image, header=hdr)
+    # Fuss with header
+    header = hdr.copy()
+    header.remove('CRVAL3')
+    header.remove('CRPIX3')
+    header.remove('CD3_3')
+    header.remove('CDELT3')
+    header.remove('NAXIS3')
+    header['NAXIS']=2
+    #
+
+    hdu_coadd = fits.PrimaryHDU(image, header=header)
     hdu_coadd.writeto(outfile, overwrite=True)
     print("Wrote image to {}".format(outfile))
