@@ -73,7 +73,6 @@ def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False):
           Wavelength of interest
         z: float, optional
           Convert to rest wavelength based on this redshift
-        infil:
         del_wave: float
           Width of NB in rest-frame
         restwave:
