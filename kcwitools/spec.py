@@ -1,49 +1,49 @@
 """ Spectra routines"""
 from __future__ import print_function, absolute_import, division, unicode_literals
 
-def extract_1D_spec_5box(xcen, ycen, fil, varfil, filebase=False):
-    wave, flux, hdr = open_kcwi_cube(fil)
-    wave, var, hdr = open_kcwi_cube(varfil)
+import numpy as np
+import pdb
 
-    # assumes sky subtracted data, and returns sqrt(var) var
-    wavedim, ydim, xdim = flux.shape
+from linetools.spectra.xspectrum1d import XSpectrum1D
 
-    ###WATCH OUT FOR THIS:  NOW SWITCHING X WITH Y BECAUSE OF HOW CUBES READ IN and displayed
-    # in the white light image
+def extract_square(xcen, ycen, wave, flux, var, squaresize=5, outfile=None):
+    """
 
-    xtmp = ycen
-    ycen = xcen
-    xcen = xtmp
+    Args:
+        xcen: int
+        ycen: int
+        wave:
+        flux:
+        var:
+        squaresize: int, optional
+          Size of the square to extract
+          Should be an odd number
+        outfile: str, optional
+          FITS file name
 
-    # Intitiate Spectrum
-    spec = np.zeros(wavedim)
-    err_spec = np.zeros(wavedim)
+    Returns:
+        xspec: XSpectrum1D
+
+    """
+    #wave, flux, hdr = open_kcwi_cube(fil)
+    #wave, var, hdr = open_kcwi_cube(varfil)
+
+    halfbox = (squaresize-1)//2
 
     # create an error array assuming poisson noise for flux
+    sub_flux = flux[:, ycen-halfbox:ycen+halfbox+1, xcen-halfbox:xcen+halfbox+1]
+    sub_var = var[:, ycen-halfbox:ycen+halfbox+1, xcen-halfbox:xcen+halfbox+1]
 
-    for i in range(wavedim):
-        slice1 = flux[i, xcen - 2:xcen + 3, ycen - 2:ycen + 3]
-        varslice = var[i, xcen - 2:xcen + 3, ycen - 2:ycen + 3]
-        spec[i] = np.sum(slice1)
-        err_spec[i] = np.sqrt(np.abs(np.sum(varslice)))
+    spec = np.sum(sub_flux, axis=(1,2))
+    err_spec = np.sqrt(np.sum(sub_var, axis=(1,2)))
 
-    prihdu = fits.PrimaryHDU(spec)
-    hdu_out = fits.HDUList([prihdu])
-    prihdu.name = 'FLUX'
+    # Object
+    xspec = XSpectrum1D.from_tuple((wave, spec, err_spec))
 
-    sighdu = fits.ImageHDU(err_spec)
-    sighdu.name = 'ERROR'
-    hdu_out.append(sighdu)
+    if outfile is not None:
+        xspec.write_to_fits(outfile)
 
-    wvhdu = fits.ImageHDU(wave)
-    wvhdu.name = 'WAVELENGTH'
-    hdu_out.append(wvhdu)
-
-    # WATCH OUT:  purposely flipping xcen and ycen here to name things according to the image diplayed
-    if filebase != False:
-        hdu_out.writeto(filebase + '_' + np.str(ycen) + '_' + np.str(xcen) + '_5x5.fits', overwrite=True)
-
-    return spec, err_spec
+    return xspec
 
 
 def extract_1D_spec(xcen, ycen, fil, varfil, delx, dely):
