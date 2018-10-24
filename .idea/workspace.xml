@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a558a1d0-eee5-444c-8007-fb5f8e90ed95" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/kcwitools/plot.py" beforeDir="false" afterPath="$PROJECT_DIR$/kcwitools/plot.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kcwitools/scripts/narrow_band.py" beforeDir="false" afterPath="$PROJECT_DIR$/kcwitools/scripts/narrow_band.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/kcwitools/scripts/white_light.py" beforeDir="false" afterPath="$PROJECT_DIR$/kcwitools/scripts/white_light.py" afterDir="false" />
-    </list>
+    <list default="true" id="a558a1d0-eee5-444c-8007-fb5f8e90ed95" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -63,8 +59,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/kcwitools/plot.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="165">
-              <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+            <state relative-caret-position="705">
+              <caret line="47" column="26" lean-forward="true" selection-start-line="47" selection-start-column="26" selection-end-line="47" selection-end-column="26" />
               <folding>
                 <element signature="e#25#107#0" expanded="true" />
                 <marker date="1540408044000" expanded="true" signature="1494:1495" ph="..." />
@@ -271,8 +267,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/kcwitools/plot.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="165">
-          <caret line="11" column="22" selection-start-line="11" selection-start-column="22" selection-end-line="11" selection-end-column="22" />
+        <state relative-caret-position="705">
+          <caret line="47" column="26" lean-forward="true" selection-start-line="47" selection-start-column="26" selection-end-line="47" selection-end-column="26" />
           <folding>
             <element signature="e#25#107#0" expanded="true" />
             <marker date="1540408044000" expanded="true" signature="1494:1495" ph="..." />
