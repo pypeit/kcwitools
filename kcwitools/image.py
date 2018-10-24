@@ -62,7 +62,7 @@ def build_whitelight(hdr, flux, minwave=3600., maxwave=5500., outfile=None):
     return whiteim
 
 
-def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False):
+def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False, outfile=None):
     """
     Generate a narrow band image at a given wavelength
 
@@ -73,9 +73,12 @@ def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False):
           Wavelength of interest
         z: float, optional
           Convert to rest wavelength based on this redshift
-        del_wave: float
+        del_wave: float, optional
           Width of NB in rest-frame
-        restwave:
+          Default = 2 Ang
+        sub_offimage: bool, optional
+          Subtract off an off-band image?
+        outfile: str, optional
 
     Returns:
         nbimage: ndarray
@@ -108,6 +111,10 @@ def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False):
     if sub_offimage:
         offimage = (low + high) / 2.0
         nbimage -= offimage
+
+    # Output?
+    if outfile is not None:
+        io.write_image(hdr, nbimage, outfile)
 
     # Return
     return nbimage

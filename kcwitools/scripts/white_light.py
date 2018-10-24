@@ -9,7 +9,7 @@ def parser(options=None):
 
     import argparse
 
-    parser = argparse.ArgumentParser(description='Make/Show/Write a white light image v1')
+    parser = argparse.ArgumentParser(description='Make/Show/Write a white light image (v1)')
     parser.add_argument("file", type=str, help="Data file (cube)")
     #parser.add_argument("--meta", default=True, help="Show meta data? [default: True]", action="store_true")
     #parser.add_argument("-s", "--select", default=0, type=int, help="Index of spectrum to plot (when multiple exist)")
@@ -32,9 +32,6 @@ def main(args):
 
     # Load
     hdr, flux = kcwi_io.open_kcwi_cube(args.file)
-
-    # Generate wavelengths
-    wave = kcwi_u.build_wave(hdr)
 
     # White light
     whiteim = kcwi_img.build_whitelight(hdr, flux, outfile=args.outfile)
