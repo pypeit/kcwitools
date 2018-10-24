@@ -6,7 +6,7 @@
 
 
 """
-This script runs PYPIT
+This script runs the white_light processing
 """
 
 import kcwitools.scripts.white_light as white_light
