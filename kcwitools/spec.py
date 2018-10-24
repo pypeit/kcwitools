@@ -3,6 +3,7 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 
 import numpy as np
 import pdb
+import warnings
 
 from linetools.spectra.xspectrum1d import XSpectrum1D
 
@@ -36,6 +37,13 @@ def extract_square(xcen, ycen, wave, flux, var, squaresize=5, outfile=None):
 
     spec = np.sum(sub_flux, axis=(1,2))
     err_spec = np.sqrt(np.sum(sub_var, axis=(1,2)))
+
+    # Replace NAN
+    bad = np.isnan(err_spec)
+    if np.any(bad):
+        warnings.warn("You have NAN in your variance cube.  Be warned. Replacing with 0.")
+        err_spec[bad] = 0.
+
 
     # Object
     xspec = XSpectrum1D.from_tuple((wave, spec, err_spec))

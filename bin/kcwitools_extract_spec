@@ -9,8 +9,8 @@
 This script runs extraction
 """
 
-import kcwitools.scripts.extract as extract
+import kcwitools.scripts.extract_spec as extract_spec
 
 if __name__ == '__main__':
-    args = extract.parser()
-    extract.main(args)
+    args = extract_spec.parser()
+    extract_spec.main(args)
