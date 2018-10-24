@@ -7,10 +7,19 @@ from astropy.wcs import WCS
 
 
 ###Display a white light image
-def show_whitelight(whiteim, header=False):
+def show_whitelight(whiteim, header=None):
+    """
+
+    Args:
+        whiteim: ndarray
+        header:
+
+    Returns:
+
+    """
     ydim, xdim = whiteim.shape
     fig = plt.figure()
-    if header == False:
+    if header is None:
         ax = fig.add_subplot(111)
         d=ax.imshow(np.log10(np.abs(whiteim)), cmap=plt.get_cmap('viridis'), origin='lower')
     else:
@@ -26,9 +35,19 @@ def show_whitelight(whiteim, header=False):
     plt.show()
 
 
-def show_narrowband(nbimage, header=False):
+def show_narrowband(nbimage, header=None):
+    """
+    Show a NB image
+
+    Args:
+        nbimage: ndarray
+        header: Header, optional
+
+    Returns:
+
+    """
     fig = plt.figure()
-    if header == False:
+    if header is None:
         ax = fig.add_subplot(111)
         d=ax.imshow(nbimage, cmap=plt.get_cmap('viridis'), origin='lower')
     else:
