@@ -28,6 +28,23 @@ def open_kcwi_cube(infil):
     return hdu_hdr, flux
 
 
+def write_cube(hdr, image, outfile):
+    """
+    Write a data cube
+
+    Args:
+        hdr:
+        image:
+        outfile:
+
+    Returns:
+
+    """
+    hdu = fits.PrimaryHDU(image, header=hdr)
+    hdu.writeto(outfile, overwrite=True)
+    print("Wrote cube to {}".format(outfile))
+
+
 def write_image(hdr, image, outfile):
     """
     Write image to disk, e.g. whitelight
