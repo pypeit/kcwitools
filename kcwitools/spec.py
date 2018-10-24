@@ -53,35 +53,3 @@ def extract_square(xcen, ycen, wave, flux, var, squaresize=5, outfile=None):
 
     return xspec
 
-
-def extract_1D_spec(xcen, ycen, fil, varfil, delx, dely):
-    wave, flux, hdr = open_kcwi_cube(fil)
-    wave, var, hdr = open_kcwi_cube(varfil)
-
-    # assumes sky subtracted data, and returns sqrt(var) var
-    wavedim, ydim, xdim = flux.shape
-
-    ###WATCH OUT FOR THIS:  NOW SWITCHING X WITH Y BECAUSE OF HOW CUBES READ IN and displayed
-    # in the white light image
-
-    xtmp = ycen
-    ycen = xcen
-    xcen = xtmp
-
-    delxtmp = dely
-    dely = delx
-    delx = delxtmp
-
-    # Intitiate Spectrum
-    spec = np.zeros(wavedim)
-    err_spec = np.zeros(wavedim)
-
-    # create an error array assuming poisson noise for flux
-
-    for i in range(wavedim):
-        slice1 = flux[i, xcen - delx:xcen + delx, ycen - dely:ycen + dely]
-        varslice = var[i, xcen - delx:xcen + delx, ycen - dely:ycen + dely]
-        spec[i] = np.sum(slice1)
-        err_spec[i] = np.sqrt(np.abs(np.sum(varslice)))
-
-    return spec, err_spec
