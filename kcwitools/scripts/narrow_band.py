@@ -15,6 +15,8 @@ def parser(options=None):
     parser.add_argument("--sub_off", default=False, help="Subtract off an off-band image?", action="store_true")
     parser.add_argument("--z", default=0., type=float, help="Redshift of the emission")
     parser.add_argument("--outfile", help="Write the narrow band image to this data file")
+    parser.add_argument("--del_wave", default=2., type=float, help="Width of Narrow Band in rest-frame")
+
 
     if options is None:
         args = parser.parse_args()
@@ -34,7 +36,7 @@ def main(args):
     hdr, flux = kcwi_io.open_kcwi_cube(args.file)
 
     # Narrow band
-    nb = kcwi_img.build_narrowband(hdr, flux, args.line, z=args.z,
+    nb = kcwi_img.build_narrowband(hdr, flux, args.line, z=args.z,del_wave=args.del_wave,
                                    sub_offimage=args.sub_off,
                                    outfile=args.outfile)
 
