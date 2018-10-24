@@ -16,7 +16,7 @@ def parser(options=None):
     parser.add_argument("--z", default=0., type=float, help="Redshift of the emission")
     parser.add_argument("--outfile", help="Write the narrow band image to this data file")
     parser.add_argument("--del_wave", default=2., type=float, help="Width of Narrow Band in rest-frame")
-    parser.add_argument("--wcs", default=False, help="If true plot image in WCS coordinate")
+    parser.add_argument("--wcs", default=False, help="If true plot image in WCS coordinate", action="store_true")
 
     if options is None:
         args = parser.parse_args()
