@@ -96,3 +96,7 @@ def run_montage(infils,outfil="Montage.fits"):
 
     
     """
+
+    subprocess.call(["mkdir","Input"])
+    subprocess.call(["mkdir","Projection"])
+    
