@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 import numpy as np
 
 from astropy import units
-
+import subprocess
 
 def build_wave(hdu_hdr, air2vac=True):
     """
@@ -85,5 +85,14 @@ def airtovac(wave):
 
     return wavelength
 
+def run_montage(infils,outfil="Montage.fits"):
+    """ take a list of (ideally trimmed) KCWI cubes and run montage on them
+    Args:
+    ----------
+    infils: list
+      list of kcwi cubes to montage
+    outfil: string
+      name of montage output file, defaults to Montage.fits'
 
-
+    
+    """
