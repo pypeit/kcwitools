@@ -43,8 +43,9 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
     gain=val['gain']
     rdnoise=val['rdnoise']  #  Don't know this value. Please instruct what should I read in here?
 
-    #if val['BIASSUB'] == 'T':  # If read noise 
-
+    # PLEASE CHECK THAT THIS IS NOT BONKERS
+    if val['BIASSUB'] == 'T':  # If read noise has already been subtracted 
+        rdnoise = 0.    
 
 
     # Wavelength
