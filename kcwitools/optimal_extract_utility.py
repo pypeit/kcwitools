@@ -4,6 +4,8 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.polynomial.chebyshev import chebfit,chebval
+import pdb
+
 
 
 
@@ -51,13 +53,25 @@ def spatial_profile( fluxcube, varcube, aperture_mask, wavelength, order, apertu
 
         weights=1.0/varcube[:, i, j]
 
-        #Fit the Chebyshev coefficients
+        ####mdl=models.Polynomial1D(order);
+
+        ##Fit the Chebyshev coefficients
         coefficients=chebfit(scaled_l, fluxcube[:, i, j], order, w=weights)
+        # initialize fitter
+        ####fit = fitting.LevMarLSQFitter()
+        ####or_fit = fitting.FittingWithOutlierRemoval(fit, sigma_clip,
+        ####                                   niter=3, sigma=3.0)
+        # get fitted model and filtered data
+        ####filtered_data, or_fitted_model = or_fit(mdl, wavelength,fluxcube[:, i, j])
+
 
         #Make a polynomial from these
         polynomial=chebval(scaled_l, coefficients)
         #Ensure all values are positve
+        ####polynomial = or_fitted_model(wavelength)
+        
         polynomial[polynomial<0]=0
+
 
 
         wavelength_fits[:, i, j]=polynomial
