@@ -18,6 +18,7 @@ def defs(header):
     #THESE VALUES NEED TO BE DOUBLE CHECKED. WHICH ONE SHOULD I USE?
     out= {}
     out['gain']=header['GAIN2']
-    out['rdnoise']=3.5   #  CHECK CHECK CHECK
+    out['rdnoise']=header['BIASRN2']   #  CHECK CHECK CHECK
+    out['BIASSUB']=header['BIASSUB']  # Has bias been subtracted or not T/F
 
     return out

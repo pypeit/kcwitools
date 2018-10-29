@@ -3,6 +3,7 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 import numpy as np
 from astropy.io import fits
 import matplotlib.pyplot as plt
+import pdb
 
 from kcwitools import optimal_extract_utility as r
 from kcwitools import utils
@@ -17,7 +18,7 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
     Args:
         fluxcube         : 3D kcwi fluxcube
         varcube          : 3D KCWI variance cube
-        header           : Header information        
+        header           : Header information       
         corners          : A tuple defining x1,x2,y1,y2: Four corners of an aribaty rectangular pseudo-slit for extraction
         sigma            : Sigma clipping values [default 5]
         fit_order        : polinomial fit order for spatial profile [default 200]
@@ -41,6 +42,8 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
 
     gain=val['gain']
     rdnoise=val['rdnoise']  #  Don't know this value. Please instruct what should I read in here?
+
+    #if val['BIASSUB'] == 'T':  # If read noise 
 
 
 
@@ -105,6 +108,7 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
 
     #Get the indices of the aperture spaxels at each wavelength
     aperture_indices = np.where((aperture_mask[900,:,:] == True))
+    #pdb.set_trace()
     
 
     N=len(aperture_indices[0])
@@ -115,11 +119,11 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
     var=var_origin+rdnoise**2
 
 
-    cube_bad=np.where(~np.isfinite(cube))
+    cube_bad=(~np.isfinite(cube))
     cube[cube_bad]=0
     cube[cube<0]=0
 
-    varbad=np.where(~np.isfinite(var))
+    varbad=(~np.isfinite(var))
     var[varbad]=np.inf
 
     sum_spec=np.sum(np.sum(aperture_mask*cube, axis=2), axis=1)
@@ -142,7 +146,7 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
             print("\n\nREVISING VARIANCE ESTIMATES\n")
 
         var=r.variance(mcube, spec, rdnoise, gain)
-        varbad=np.where(~np.isfinite(var))
+        varbad=(~np.isfinite(var))
         var[varbad]=np.inf
     
         if verbose is True:
