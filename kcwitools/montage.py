@@ -2,6 +2,7 @@
 from __future__ import print_function, absolute_import, division, unicode_literals
 import numpy as np
 
+from astropy.io import fits
 from astropy import units
 import subprocess
 
@@ -47,7 +48,7 @@ def run_montage(infils,outfil="Montage.fits",grating='BL',clean=False):
     #fix the header after montage is done (need to fix for general grating)
     fix_kcwi_cube_montage_BL(outfil)
 
-###Add the CD3_3 and CDELT3 keywords to a cube made by montage
+###Add the CD3_3 and CDELT3 keywords to a BL grating cube cube made by montage
 def fix_kcwi_cube_montage_BL(mosaicfil):
     hdu = fits.open(mosaicfil)
     flux = hdu['PRIMARY'].data
