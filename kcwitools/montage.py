@@ -5,7 +5,7 @@ import numpy as np
 from astropy import units
 
 
-def run_montage(infils,outfil="Montage.fits",clean=True):
+def run_montage(infils,outfil="Montage.fits",clean=False):
     """ take a list of (ideally trimmed) KCWI cubes and run montage on them
     Args:
     ----------
@@ -24,11 +24,20 @@ def run_montage(infils,outfil="Montage.fits",clean=True):
         subprocess.call(["cp",fil,"Input"])
 
     subprocess.call(["mImgtbl","-c","Input/","cubes.tbl"])
+    subprocess.call(["mMakeHdr","cubes.tbl","cubes.hdr"])
 
+    for fil in infils:
+        tmp=fil.split(".")
+        subprocess.call(["mProjectCube","Input/"+fil,"projection/"+tmp[0]+"_proj.fits","cubes.hdr"])
+
+    subprocess.call(["mImgtbl","-c","projection/","cubes-proj.tbl"])
+    subprocess.call(["mAddCube","-p projection/","cubes-proj.tbl","cubes.hdr",outfil])
+    
     if(clean):
         subprocess.call(["rm","-rf","Input"])
         subprocess.call(["rm","-rf","Projection"])
-
+        subprocess.call(["rm","cubes.tbl","cubes.hdr","cubes-proj.tbl"])
+    
 
 #mImgtbl -c Input/ cubes.tbl
 #mMakeHdr cubes.tbl cubes.hdr
