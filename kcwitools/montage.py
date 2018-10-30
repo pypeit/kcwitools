@@ -3,7 +3,7 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 import numpy as np
 
 from astropy import units
-
+import subprocess
 
 def run_montage(infils,outfil="Montage.fits",clean=False):
     """ take a list of (ideally trimmed) KCWI cubes and run montage on them
