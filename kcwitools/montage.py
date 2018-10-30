@@ -5,7 +5,7 @@ import numpy as np
 from astropy import units
 import subprocess
 
-def run_montage(infils,outfil="Montage.fits",clean=False):
+def run_montage(infils,outfil="Montage.fits",grating='BL',clean=False):
     """ take a list of (ideally trimmed) KCWI cubes and run montage on them
     Args:
     ----------
@@ -17,40 +17,38 @@ def run_montage(infils,outfil="Montage.fits",clean=False):
     
     """
 
+    #create the driectories
     subprocess.call(["mkdir","Input"])
     subprocess.call(["mkdir","Projection"])
 
+    #copy
     for fil in infils:
         subprocess.call(["cp",fil,"Input"])
 
+    #first part of montage
     subprocess.call(["mImgtbl","-c","Input/","cubes.tbl"])
     subprocess.call(["mMakeHdr","cubes.tbl","cubes.hdr"])
 
+    #second art of montage
     for fil in infils:
         tmp=fil.split(".")
         subprocess.call(["mProjectCube","Input/"+fil,"projection/"+tmp[0]+"_proj.fits","cubes.hdr"])
 
+    #final part of montage
     subprocess.call(["mImgtbl","-c","projection/","cubes-proj.tbl"])
     subprocess.call(["mAddCube","-p projection/","cubes-proj.tbl","cubes.hdr",outfil])
-    
+
+    #remove all montage created bits aside from output file (default is off)
     if(clean):
         subprocess.call(["rm","-rf","Input"])
         subprocess.call(["rm","-rf","Projection"])
         subprocess.call(["rm","cubes.tbl","cubes.hdr","cubes-proj.tbl"])
-    
 
-#mImgtbl -c Input/ cubes.tbl
-#mMakeHdr cubes.tbl cubes.hdr
-#mProjectCube Input/kb180905_00062_icubes_trimmed.fits projection/kb180905_00062_icubes_trimmed_proj.fits cubes.hdr
-#mProjectCube Input/kb180905_00063_icubes_trimmed.fits projection/kb180905_00063_icubes_trimmed_proj.fits cubes.hdr
-#mProjectCube Input/kb180905_00064_icubes_trimmed.fits projection/kb180905_00064_icubes_trimmed_proj.fits cubes.hdr
-#mProjectCube Input/kb180905_00065_icubes_trimmed.fits projection/kb180905_00065_icubes_trimmed_proj.fits cubes.hdr
-#mImgtbl -c projection/ cubes-proj.tbl
-#mAddCube -p projection/ cubes-proj.tbl cubes.hdr J2222_0918.fits
-
+    #fix the header after montage is done (need to fix for general grating)
+    fix_kcwi_cube_montage_BL(outfil)
 
 ###Add the CD3_3 and CDELT3 keywords to a cube made by montage
-def fix_kcwi_cube_montage(mosaicfil):
+def fix_kcwi_cube_montage_BL(mosaicfil):
     hdu = fits.open(mosaicfil)
     flux = hdu['PRIMARY'].data
     hdu_hdr = hdu['PRIMARY'].header
