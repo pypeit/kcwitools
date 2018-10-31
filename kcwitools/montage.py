@@ -45,8 +45,12 @@ def run_montage(infils,outfil="Montage.fits",grating='BL',clean=False):
         subprocess.call(["rm","-rf","Projection"])
         subprocess.call(["rm","cubes.tbl","cubes.hdr","cubes-proj.tbl"])
 
-    #fix the header after montage is done (need to fix for general grating)
-    fix_kcwi_cube_montage_BL(outfil)
+    #fix the header after montage is done
+    if grating == 'BL':
+        fix_kcwi_cube_montage_BL(outfil)
+    if grating == 'BM':
+        fix_kcwi_cube_montage_BM(outfil)
+        
 
 ###Add the CD3_3 and CDELT3 keywords to a BL grating cube cube made by montage
 def fix_kcwi_cube_montage_BL(mosaicfil):
@@ -65,7 +69,7 @@ def fix_kcwi_cube_montage_BL(mosaicfil):
 
 
 ###Add the CD3_3 and CDELT3 keywords to a cube made by montage for higher resolution
-def fix_kcwi_cube_montage_2(mosaicfil):
+def fix_kcwi_cube_montage_BM(mosaicfil):
     hdu = fits.open(mosaicfil)
     flux = hdu['PRIMARY'].data
     hdu_hdr = hdu['PRIMARY'].header
