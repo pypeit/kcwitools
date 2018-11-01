@@ -19,7 +19,7 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
     """
 
     #create the driectories
-    subprocess.call(["mkdir",outdir+"Input",shell=True)
+    subprocess.call(["mkdir",outdir+"Input"],shell=True)
     subprocess.call(["mkdir",outdir+"Projection"],shell=True)
 
     #copy
