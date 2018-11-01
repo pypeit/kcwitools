@@ -27,17 +27,17 @@ def run_montage(infils,outfil="Montage.fits",grating='BL',clean=False):
         subprocess.call(["cp",fil,"Input"])
 
     #first part of montage
-    subprocess.Popen(["mImgtbl","-c","Input/","cubes.tbl"]).wait()
-    subprocess.Popen(["mMakeHdr","cubes.tbl","cubes.hdr"]).wait()
+    subprocess.call(["mImgtbl","-c","Input/","cubes.tbl"],shell=True)
+    subprocess.call(["mMakeHdr","cubes.tbl","cubes.hdr"],shell=True)
 
     #second art of montage
     for fil in infils:
         tmp=fil.split(".")
-        subprocess.Popen(["mProjectCube","Input/"+fil,"projection/"+tmp[0]+"_proj.fits","cubes.hdr"]).wait()
+        subprocess.call(["mProjectCube","Input/"+fil,"projection/"+tmp[0]+"_proj.fits","cubes.hdr"],shell=True)
 
     #final part of montage
-    subprocess.Popen(["mImgtbl","-c","projection/","cubes-proj.tbl"]).wait()
-    subprocess.Popen(["mAddCube","-p projection/","cubes-proj.tbl","cubes.hdr",outfil]).wait()
+    subprocess.call(["mImgtbl","-c","projection/","cubes-proj.tbl"],shell=True)
+    subprocess.call(["mAddCube","-p projection/","cubes-proj.tbl","cubes.hdr",outfil],shell=True)
 
     #remove all montage created bits aside from output file (default is off)
     if(clean):
