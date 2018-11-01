@@ -37,7 +37,7 @@ def run_montage(infils,outfil="Montage.fits",grating='BL',clean=False):
 
     #final part of montage
     subprocess.Popen(["mImgtbl","-c","projection/","cubes-proj.tbl"]).wait()
-    subprocess.Popen(["mAddCube","-p projection/","cubes-proj.tbl","cubes.hdr",outfil])..wait()
+    subprocess.Popen(["mAddCube","-p projection/","cubes-proj.tbl","cubes.hdr",outfil]).wait()
 
     #remove all montage created bits aside from output file (default is off)
     if(clean):
