@@ -6,7 +6,7 @@ from astropy.io import fits
 from astropy import units
 import subprocess
 
-def run_montage(infils,outfil="Montage.fits",grating='BL',clean=False):
+def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=False):
     """ take a list of (ideally trimmed) KCWI cubes and run montage on them
     Args:
     ----------
@@ -19,37 +19,37 @@ def run_montage(infils,outfil="Montage.fits",grating='BL',clean=False):
     """
 
     #create the driectories
-    subprocess.call(["mkdir","Input"])
-    subprocess.call(["mkdir","Projection"])
+    subprocess.call(["mkdir",outdir+"Input"])
+    subprocess.call(["mkdir",outdir+"Projection"])
 
     #copy
     for fil in infils:
-        subprocess.call(["cp",fil,"Input"])
+        subprocess.call(["cp",fil,outfir+"Input"])
 
     #first part of montage
-    subprocess.call(["mImgtbl","-c","Input/","cubes.tbl"],shell=True)
-    subprocess.call(["mMakeHdr","cubes.tbl","cubes.hdr"],shell=True)
+    subprocess.call(["mImgtbl","-c","Input/",outdir+"cubes.tbl"],shell=True)
+    subprocess.call(["mMakeHdr",outdir+"cubes.tbl",outdir+"cubes.hdr"],shell=True)
 
     #second art of montage
     for fil in infils:
         tmp=fil.split(".")
-        subprocess.call(["mProjectCube","Input/"+fil,"projection/"+tmp[0]+"_proj.fits","cubes.hdr"],shell=True)
+        subprocess.call(["mProjectCube",outdir+"Input/"+fil,outdir+"projection/"+tmp[0]+"_proj.fits",outdir+"cubes.hdr"],shell=True)
 
     #final part of montage
-    subprocess.call(["mImgtbl","-c","projection/","cubes-proj.tbl"],shell=True)
-    subprocess.call(["mAddCube","-p projection/","cubes-proj.tbl","cubes.hdr",outfil],shell=True)
+    subprocess.call(["mImgtbl","-c",outdir+"projection/",outdir+"cubes-proj.tbl"],shell=True)
+    subprocess.call(["mAddCube","-p",outdir+"projection/",outdir+"cubes-proj.tbl",outdir+"cubes.hdr",outdir+outfil],shell=True)
 
     #remove all montage created bits aside from output file (default is off)
     if(clean):
-        subprocess.call(["rm","-rf","Input"])
-        subprocess.call(["rm","-rf","Projection"])
-        subprocess.call(["rm","cubes.tbl","cubes.hdr","cubes-proj.tbl"])
+        subprocess.call(["rm","-rf",outdir+"Input"])
+        subprocess.call(["rm","-rf",outdir+"Projection"])
+        subprocess.call(["rm",outdir+"cubes.tbl",outdir+"cubes.hdr",outdir+"cubes-proj.tbl"])
 
     #fix the header after montage is done
     if grating == 'BL':
-        fix_kcwi_cube_montage_BL(outfil)
+        fix_kcwi_cube_montage_BL(outdir+outfil)
     if grating == 'BM':
-        fix_kcwi_cube_montage_BM(outfil)
+        fix_kcwi_cube_montage_BM(outdir+outfil)
         
 
 ###Add the CD3_3 and CDELT3 keywords to a BL grating cube cube made by montage
