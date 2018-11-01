@@ -24,7 +24,7 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
 
     #copy
     for fil in infils:
-        subprocess.call(["cp",fil,outfir+"Input"])
+        subprocess.call(["cp",fil,outdir+"Input"]).wait()
 
     #first part of montage
     subprocess.call(["mImgtbl","-c","Input/",outdir+"cubes.tbl"],shell=True)
