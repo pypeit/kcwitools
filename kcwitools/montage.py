@@ -30,7 +30,7 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
         subprocess.Popen(["cp",fil,outdir+"Input"]).wait()
 
     #first part of montage
-    subprocess.Popen(["mImgtbl","-c","Input/",outdir+"cubes.tbl"]).communicate()
+    subprocess.Popen(["mImgtbl","-c",outdir+"Input/",outdir+"cubes.tbl"]).communicate()
     subprocess.Popen(["mMakeHdr",outdir+"cubes.tbl",outdir+"cubes.hdr"]).wait()
 
     #second art of montage
