@@ -31,7 +31,7 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
         subprocess.Popen(["cp",fil,outdir+"Input"]).wait()
 
     inputs = []
-    for files in os.walk(outdir+'Input/'):
+    for root, dirs,files in os.walk(outdir+'Input/'):
         for file in files:
             inputs.append(file)
                 
