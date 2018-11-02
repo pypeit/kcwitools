@@ -24,10 +24,10 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
 
     #copy
     for fil in infils:
-        subprocess.run(["cp",fil,outdir+"Input"])
+        subprocess.Popen(["cp",fil,outdir+"Input"]).wait()
 
     #first part of montage
-    subprocess.call(["mImgtbl","-c","Input/",outdir+"cubes.tbl"],shell=True)
+    subprocess.Popen(["mImgtbl","-c","Input/",outdir+"cubes.tbl"]).wait()
     subprocess.call(["mMakeHdr",outdir+"cubes.tbl",outdir+"cubes.hdr"],shell=True)
 
     #second art of montage
