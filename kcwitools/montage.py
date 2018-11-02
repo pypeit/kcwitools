@@ -28,22 +28,22 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
 
     #first part of montage
     subprocess.Popen(["mImgtbl","-c","Input/",outdir+"cubes.tbl"]).wait()
-    subprocess.call(["mMakeHdr",outdir+"cubes.tbl",outdir+"cubes.hdr"],shell=True)
+    subprocess.Popen(["mMakeHdr",outdir+"cubes.tbl",outdir+"cubes.hdr"]).wait()
 
     #second art of montage
     for fil in infils:
         tmp=fil.split(".")
-        subprocess.call(["mProjectCube",outdir+"Input/"+fil,outdir+"projection/"+tmp[0]+"_proj.fits",outdir+"cubes.hdr"],shell=True)
+        subprocess.Popen(["mProjectCube",outdir+"Input/"+fil,outdir+"projection/"+tmp[0]+"_proj.fits",outdir+"cubes.hdr"]).wait()
 
     #final part of montage
-    subprocess.call(["mImgtbl","-c",outdir+"projection/",outdir+"cubes-proj.tbl"],shell=True)
-    subprocess.call(["mAddCube","-p",outdir+"projection/",outdir+"cubes-proj.tbl",outdir+"cubes.hdr",outdir+outfil],shell=True)
+    subprocess.Popen(["mImgtbl","-c",outdir+"projection/",outdir+"cubes-proj.tbl"]).wait()
+    subprocess.Popen(["mAddCube","-p",outdir+"projection/",outdir+"cubes-proj.tbl",outdir+"cubes.hdr",outdir+outfil]).wait()
 
     #remove all montage created bits aside from output file (default is off)
     if(clean):
-        subprocess.call(["rm","-rf",outdir+"Input"])
-        subprocess.call(["rm","-rf",outdir+"Projection"])
-        subprocess.call(["rm",outdir+"cubes.tbl",outdir+"cubes.hdr",outdir+"cubes-proj.tbl"])
+        subprocess.Popen(["rm","-rf",outdir+"Input"])
+        subprocess.Popen(["rm","-rf",outdir+"Projection"])
+        subprocess.Popen(["rm",outdir+"cubes.tbl",outdir+"cubes.hdr",outdir+"cubes-proj.tbl"])
 
     #fix the header after montage is done
     if grating == 'BL':
