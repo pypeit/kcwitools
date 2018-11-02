@@ -19,12 +19,12 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
     """
 
     #create the driectories
-    subprocess.run(["mkdir",outdir+"Input"])
-    subprocess.run(["mkdir",outdir+"Projection"])
+    subprocess.Popen(["mkdir",outdir+"Input"])
+    subprocess.Popen(["mkdir",outdir+"Projection"])
 
     #copy
     for fil in infils:
-        subprocess.run(["cp",fil,outdir+"Input"],shell=True)
+        subprocess.run(["cp",fil,outdir+"Input"])
 
     #first part of montage
     subprocess.call(["mImgtbl","-c","Input/",outdir+"cubes.tbl"],shell=True)
