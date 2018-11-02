@@ -29,12 +29,18 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
     for fil in infils:
         subprocess.Popen(["cp",fil,outdir+"Input"]).wait()
 
+    inputs = []
+    for files in os.walk(outdir+'Input/'):
+        for file in files:
+            if file.endswith('.fits'):
+                inputs.append(file)
+                
     #first part of montage
-    subprocess.Popen(["mImgtbl","-c",outdir+"Input/",outdir+"cubes.tbl"]).communicate()
+    subprocess.Popen(["mImgtbl","-c",outdir+"Input/",outdir+"cubes.tbl"]).wait()
     subprocess.Popen(["mMakeHdr",outdir+"cubes.tbl",outdir+"cubes.hdr"]).wait()
 
     #second art of montage
-    for fil in infils:
+    for fil in inputs:
         tmp=fil.split(".")
         subprocess.Popen(["mProjectCube",outdir+"Input/"+fil,outdir+"projection/"+tmp[0]+"_proj.fits",outdir+"cubes.hdr"]).wait()
 
