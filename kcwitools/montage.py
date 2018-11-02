@@ -33,8 +33,7 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
     inputs = []
     for files in os.walk(outdir+'Input/'):
         for file in files:
-            if file.endswith('.fits'):
-                inputs.append(file)
+            inputs.append(file)
                 
     #first part of montage
     subprocess.Popen(["mImgtbl","-c",outdir+"Input/",outdir+"cubes.tbl"]).wait()
