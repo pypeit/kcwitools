@@ -18,6 +18,9 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
     
     """
 
+    #in case the user forgets the trailing /
+    outdir = outdir+'/'
+    
     #create the driectories
     subprocess.Popen(["mkdir",outdir+"Input"])
     subprocess.Popen(["mkdir",outdir+"Projection"])
