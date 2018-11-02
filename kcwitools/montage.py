@@ -5,6 +5,7 @@ import numpy as np
 from astropy.io import fits
 from astropy import units
 import subprocess
+import os
 
 def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=False):
     """ take a list of (ideally trimmed) KCWI cubes and run montage on them
