@@ -5,6 +5,7 @@ import pdb
 
 from kcwitools import io
 from kcwitools import utils
+from astropy.io import fits
 
 ###trim off the crap parts of the KCWI cube
 def kcwi_cube_trim_BM(infil):
