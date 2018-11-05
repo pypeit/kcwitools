@@ -4,10 +4,13 @@ import numpy as np
 
 from astropy.io import fits
 from astropy import units
+
+from kcwitools import image as im
+
 import subprocess
 import os
 
-def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=False):
+def run_montage(infils,outdir="./",outfil="Montage.fits",trimBL=False,trimBM=False,grating='BL',clean=False):
     """ take a list of (ideally trimmed) KCWI cubes and run montage on them
     Args:
     ----------
@@ -28,7 +31,14 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
 
     #copy
     for fil in infils:
-        subprocess.Popen(["cp",fil,outdir+"Input"]).wait()
+        #check to see if you are trimming, and a BL slicer
+        if(trimBL):
+            im.kcwi_cube_trim(fil)
+            a, b = fli.split(".fits")
+            trim = a + '_trimmed.fits'
+            subprocess.Popen(["cp"trim,outdir+"Input"]).wait()
+        else:
+            subprocess.Popen(["cp",fil,outdir+"Input"]).wait()
 
     inputs = []
     for root, dirs,files in os.walk(outdir+'Input/'):
@@ -39,7 +49,7 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",grating='BL',clean=Fals
     subprocess.Popen(["mImgtbl","-c",outdir+"Input/",outdir+"cubes.tbl"]).wait()
     subprocess.Popen(["mMakeHdr",outdir+"cubes.tbl",outdir+"cubes.hdr"]).wait()
 
-    #second art of montage
+    #second part of montage
     for fil in inputs:
         tmp=fil.split(".")
         subprocess.Popen(["mProjectCube",outdir+"Input/"+fil,outdir+"projection/"+tmp[0]+"_proj.fits",outdir+"cubes.hdr"]).wait()
