@@ -41,7 +41,7 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",trimBL=False,trimBM=Fal
             im.kcwi_cube_trim_BL(fil)
             a, b = fli.split(".fits")
             trim = a + '_trimmed.fits'
-            subprocess.Popen(["cp"trim,outdir+"Input"]).wait()
+            subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
         else:
             subprocess.Popen(["cp",fil,outdir+"Input"]).wait()
 
