@@ -7,8 +7,8 @@ from kcwitools import io
 from kcwitools import utils
 
 ###trim off the crap parts of the KCWI cube
-def kcwi_cube_trim(infil):
-    wave, flux, hdr = open_kcwi_cube(infil)
+def kcwi_cube_trim_BM(infil):
+    hdr, flux = io.open_kcwi_cube(infil)
     trimflux = flux[:, 18:81, 6:28]  # note that python reads arrays weird.  Trim *down in y* then x.
 
     a, b = infil.split(".fits")
@@ -19,8 +19,8 @@ def kcwi_cube_trim(infil):
 
 
 ###trim off crap parts of larger kcwi cube
-def kcwi_cube_trim_large(infil):
-    wave, flux, hdr = open_kcwi_cube(infil)
+def kcwi_cube_trim_BL(infil):
+    hdr, flux = io.open_kcwi_cube(infil)
     trimflux = flux[:, 15:81, 2:26]  # note that python reads arrays weird.  Trim *down in y* then x.
 
     a, b = infil.split(".fits")

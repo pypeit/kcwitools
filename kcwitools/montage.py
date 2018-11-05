@@ -31,9 +31,14 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",trimBL=False,trimBM=Fal
 
     #copy
     for fil in infils:
-        #check to see if you are trimming, and a BL slicer
-        if(trimBL):
-            im.kcwi_cube_trim(fil)
+        #check to see if you are trimming, and a BM slicer
+        if(trimBM):
+            im.kcwi_cube_trim_BM(fil)
+            a, b = fli.split(".fits")
+            trim = a + '_trimmed.fits'
+            subprocess.Popen(["cp"trim,outdir+"Input"]).wait()
+        elif(trimBL):
+            im.kcwi_cube_trim_BL(fil)
             a, b = fli.split(".fits")
             trim = a + '_trimmed.fits'
             subprocess.Popen(["cp"trim,outdir+"Input"]).wait()
