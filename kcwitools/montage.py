@@ -10,7 +10,7 @@ from kcwitools import image as im
 import subprocess
 import os
 
-def run_montage(infils,outdir="./",outfil="Montage.fits",trimBL=False,trimBM=False,grating='BL',clean=False):
+def run_montage(infils,outdir=os.getcwd()+'/',outfil="Montage.fits",trimBL=False,trimBM=False,grating='BL',clean=False):
     """ take a list of (ideally trimmed) KCWI cubes and run montage on them
     Args:
     ----------
@@ -66,7 +66,7 @@ def run_montage(infils,outdir="./",outfil="Montage.fits",trimBL=False,trimBM=Fal
     #remove all montage created bits aside from output file (default is off)
     if(clean):
         subprocess.Popen(["rm","-rf",outdir+"Input"])
-        subprocess.Popen(["rm","-rf",outdir+"Projection"])
+        subprocess.Popen(["rm","-rf",outdir+"projection"])
         subprocess.Popen(["rm",outdir+"cubes.tbl",outdir+"cubes.hdr",outdir+"cubes-proj.tbl"])
 
     #fix the header after montage is done
