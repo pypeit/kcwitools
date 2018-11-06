@@ -10,7 +10,7 @@ from kcwitools import image as im
 import subprocess
 import os
 
-def run_montage(infils,outdir='./',outfil="Montage.fits",trimBL=False,trimBM=False,grating='BL',clean=False):
+def run_montage(infils,outdir='Montage/',outfil="Montage.fits",trimBL=False,trimBM=False,grating='BL',clean=False):
     """ take a list of (ideally trimmed) KCWI cubes and run montage on them
     Args:
     ----------
@@ -26,6 +26,7 @@ def run_montage(infils,outdir='./',outfil="Montage.fits",trimBL=False,trimBM=Fal
     outdir = outdir+'/'
     
     #create the driectories
+    subprocess.Popen(["mkdir",outdir])
     subprocess.Popen(["mkdir",outdir+"Input"])
     subprocess.Popen(["mkdir",outdir+"Projection"])
 
