@@ -58,16 +58,16 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",trimBL=False,trim
     #second part of montage
     for fil in inputs:
         tmp=fil.split(".")
-        subprocess.Popen(["mProjectCube",outdir+"Input/"+fil,outdir+"projection/"+tmp[0]+"_proj.fits",outdir+"cubes.hdr"]).wait()
+        subprocess.Popen(["mProjectCube",outdir+"Input/"+fil,outdir+"Projection/"+tmp[0]+"_proj.fits",outdir+"cubes.hdr"]).wait()
 
     #final part of montage
-    subprocess.Popen(["mImgtbl","-c",outdir+"projection/",outdir+"cubes-proj.tbl"]).wait()
-    subprocess.Popen(["mAddCube","-p",outdir+"projection/",outdir+"cubes-proj.tbl",outdir+"cubes.hdr",outdir+outfil]).wait()
+    subprocess.Popen(["mImgtbl","-c",outdir+"Projection/",outdir+"cubes-proj.tbl"]).wait()
+    subprocess.Popen(["mAddCube","-p",outdir+"Projection/",outdir+"cubes-proj.tbl",outdir+"cubes.hdr",outdir+outfil]).wait()
 
     #remove all montage created bits aside from output file (default is off)
     if(clean):
         subprocess.Popen(["rm","-rf",outdir+"Input"])
-        subprocess.Popen(["rm","-rf",outdir+"projection"])
+        subprocess.Popen(["rm","-rf",outdir+"Projection"])
         subprocess.Popen(["rm",outdir+"cubes.tbl",outdir+"cubes.hdr",outdir+"cubes-proj.tbl"])
 
     #fix the header after montage is done
