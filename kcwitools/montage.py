@@ -59,10 +59,10 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
 
     ##are you forcing pixels to be north up?
     if northup:
-        tab=Table.read('cubes.hdr',format='ascii',data_end=19)
+        tab=Table.read(outdir+'cubes.hdr',format='ascii',data_end=19)
         tab[17][2]='0.000000000'
         tab.add_row(['END',' ',' '])
-        tab.write('cubes.hdr',format='ascii')
+        tab.write(outdir+'cubes.hdr',format='ascii')
         
     #second part of montage
     for fil in inputs:
