@@ -62,7 +62,7 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
         tab=Table.read(outdir+'cubes.hdr',format='ascii',data_end=19)
         tab[17][2]='0.000000000'
         tab.add_row(['END',' ',' '])
-        tab.write(outdir+'cubes.hdr',format='ascii')
+        tab.write(outdir+'cubes.hdr',format='ascii',overwrite=True)
         
     #second part of montage
     for fil in inputs:
