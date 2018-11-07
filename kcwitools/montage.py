@@ -61,7 +61,7 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
     if northup:
         tab=Table.read('cubes.hdr',format='ascii',data_end=19)
         tab[17][2]='0.000000000'
-        tab.add_row(['END',' ',' ')
+        tab.add_row(['END',' ',' '])
         tab.write('cubes.hdr',format='ascii')
         
     #second part of montage
