@@ -4,14 +4,16 @@ import numpy as np
 
 from astropy.io import fits
 from astropy import units
+from astropy.table import Table
 
 from kcwitools import image as im
 
 import subprocess
 import os
 
-def run_montage(infils,outdir='Montage/',outfil="Montage.fits",trimBL=False,trimBM=False,grating='BL',clean=False):
-    """ take a list of (ideally trimmed) KCWI cubes and run montage on them
+def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
+                trimBL=False,trimBM=False,grating='BL',clean=False):
+    """ take a list of KCWI cubes and run montage on them
     Args:
     ----------
     infils: list
@@ -55,6 +57,13 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",trimBL=False,trim
     subprocess.Popen(["mImgtbl","-c",outdir+"Input/",outdir+"cubes.tbl"]).wait()
     subprocess.Popen(["mMakeHdr",outdir+"cubes.tbl",outdir+"cubes.hdr"]).wait()
 
+    ##are you forcing pixels to be north up?
+    if northup:
+        tab=Table.read('cubes.hdr',format='ascii',data_end=19)
+        tab[17][2]='0.000000000'
+        tab.add_row(['END',' ',' ')
+        tab.write('cubes.hdr')
+        
     #second part of montage
     for fil in inputs:
         tmp=fil.split(".")
