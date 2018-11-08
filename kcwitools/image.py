@@ -7,10 +7,11 @@ from kcwitools import io
 from kcwitools import utils
 from astropy.io import fits
 
-###trim off the crap parts of the KCWI cube
-def kcwi_cube_trim_BM(infil):
+###trim off the crap parts of the KCWI cube medium slicer
+###This is *aggressive* in the y direction because of dispersion
+def kcwi_cube_trim_Medium(infil):
     hdr, flux = io.open_kcwi_cube(infil)
-    trimflux = flux[:, 18:81, 6:28]  # note that python reads arrays weird.  Trim *down in y* then x.
+    trimflux = flux[:, 16:80, 6:28]  # note that python reads arrays weird.  Trim *down in y* then x.
 
     a, b = infil.split(".fits")
     outfil = a + '_trimmed.fits'
@@ -19,8 +20,8 @@ def kcwi_cube_trim_BM(infil):
     hdu_out.writeto(outfil, overwrite=True)
 
 
-###trim off crap parts of larger kcwi cube
-def kcwi_cube_trim_BL(infil):
+###trim off crap parts of the KCWI large slicer
+def kcwi_cube_trim_Large(infil):
     hdr, flux = io.open_kcwi_cube(infil)
     trimflux = flux[:, 15:81, 2:26]  # note that python reads arrays weird.  Trim *down in y* then x.
 
