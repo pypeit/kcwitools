@@ -30,8 +30,6 @@ def build_wave(hdu_hdr, air2vac=True):
 
 
 
-
-
 def airtovac(wave):
     """ Convert air-based wavelengths to vacuum
 
