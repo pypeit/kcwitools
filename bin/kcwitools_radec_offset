@@ -1,0 +1,16 @@
+#!/usr/bin/env python
+#
+# See top-level LICENSE file for Copyright information
+#
+# -*- coding: utf-8 -*-
+
+
+"""
+This script offsets RA/DEC in a KCWI header
+"""
+
+import kcwitools.scripts.radec_off as radec_off
+
+if __name__ == '__main__':
+    args = radec_off.parser()
+    radec_off.main(args)

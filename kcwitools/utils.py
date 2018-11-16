@@ -27,49 +27,7 @@ def build_wave(hdu_hdr, air2vac=True):
     # Return
     return wave
 
-def set_radec(hdu_hdr, ra, dec, x, y):
-    """
-    Modify the Header to force RA/DEC value at a given x,y position
 
-    Args:
-        hdu_hdr: Header
-        ra: float (deg)
-        dec: float (deg)
-        x: float
-          x pixel position in the image
-        y: float
-          y pixel position in the image
-
-    Returns:
-        new_hdr: Header
-
-    """
-    new_hdr = hdu_hdr.copy()
-    # Offset
-    new_hdr['CRVAL1'] = ra
-    new_hdr['CRVAL2'] = dec
-    new_hdr['CRPIX1'] = x
-    new_hdr['CRPIX2'] = y
-    return new_hdr
-
-def offset_radec(hdu_hdr, ra_offset, dec_offset):
-    """
-    Impose offset on the header
-
-    Args:
-        hdu_hdr: Header
-        ra_offset: float (deg)
-        dec_offset:  float (deg)
-
-    Returns:
-        new_hdr : Header
-    """
-    new_hdr = hdu_hdr.copy()
-    # Offset
-    new_hdr['CRVAL1'] += ra_offset
-    new_hdr['CRVAL2'] += dec_offset
-    # Return
-    return new_hdr
 
 ###Add the CD3_3 and CDELT3 keywords to a cube made by montage
 def fix_kcwi_cube_montage(mosaicfil):
