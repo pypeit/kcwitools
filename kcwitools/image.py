@@ -5,10 +5,12 @@ import pdb
 
 from kcwitools import io
 from kcwitools import utils
+from astropy.io import fits
 
-###trim off the crap parts of the KCWI cube
-def kcwi_cube_trim(infil):
-    wave, flux, hdr = open_kcwi_cube(infil)
+###trim off the crap parts of the KCWI cube medium slicer
+###This is *aggressive* in the y direction because of dispersion
+def kcwi_cube_trim_Medium(infil):
+    hdr, flux = io.open_kcwi_cube(infil)
     trimflux = flux[:, 18:81, 6:28]  # note that python reads arrays weird.  Trim *down in y* then x.
 
     a, b = infil.split(".fits")
@@ -20,7 +22,7 @@ def kcwi_cube_trim(infil):
 
 ###trim off crap parts of larger kcwi cube
 def kcwi_cube_trim_large(infil):
-    wave, flux, hdr = open_kcwi_cube(infil)
+    hdr, flux = io.open_kcwi_cube(infil)
     trimflux = flux[:, 15:81, 2:26]  # note that python reads arrays weird.  Trim *down in y* then x.
 
     a, b = infil.split(".fits")
@@ -119,8 +121,11 @@ def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False, 
     # Return
     return nbimage
 
-def cube_skysub(fil, skyy1, skyy2, skyx1, skyx2, outfil):
-    wave, flux, hdr = open_kcwi_cube(fil)
+def cube_skysub(fil, skyy1, skyy2, skyx1, skyx2, outfil=None):
+    hdr, flux = io.open_kcwi_cube(fil)
+    # Wavelengths
+    wave= utils.build_wave(hdr)
+
     wavedim, ydim, xdim = flux.shape
     sky = np.zeros(wavedim)
 
@@ -132,13 +137,21 @@ def cube_skysub(fil, skyy1, skyy2, skyx1, skyx2, outfil):
     for i in range(wavedim):
         fluxmsky[i, :, :] = flux[i, :, :] - sky[i]
 
-    hdu_out = fits.PrimaryHDU(fluxmsky, header=hdr)
-    hdu_out.writeto(outfil, overwrite=True)
+
+    if outfil is not None:
+        hdu_out = fits.PrimaryHDU(fluxmsky, header=hdr)
+        hdu_out.writeto(outfil, overwrite=True)
+
+    #Returns
+    return fluxmsky
 
 
-def var_skysub(varfil, skyy1, skyy2, skyx1, skyx2, outfil):
-    wave, var, hdr = open_kcwi_cube(varfil)
+def var_skysub(varfil, skyy1, skyy2, skyx1, skyx2, outfil=None):
+    hdr, var = io.open_kcwi_cube(varfil)
+    # Wavelengths
+    wave= utils.build_wave(hdr)
     wavedim, ydim, xdim = var.shape
+
     sky = np.zeros(wavedim)
 
     for i in range(wavedim):
@@ -149,6 +162,10 @@ def var_skysub(varfil, skyy1, skyy2, skyx1, skyx2, outfil):
     for i in range(wavedim):
         varwsky[i, :, :] = var[i, :, :] + sky[i]
 
-    hdu_out = fits.PrimaryHDU(varwsky, header=hdr)
-    hdu_out.writeto(outfil, overwrite=True)
+    if outfil is not None:
+        hdu_out = fits.PrimaryHDU(varwsky, header=hdr)
+        hdu_out.writeto(outfil, overwrite=True)
+
+    #Returns
+    return varwsky
 
