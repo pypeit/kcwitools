@@ -44,9 +44,7 @@ def main(args):
     hdr, flux = kcwi_io.open_kcwi_cube(args.orig_cube)
 
     # Generate the new hdr
-    ra_off = offsets[0].to('deg').value/ np.cos(coord1.dec).value
-    dec_off = offsets[1].to('deg').value
-    new_hdr = kcwi_r.offset_radec(hdr, ra_off, dec_off)
+    new_hdr = kcwi_r.offset_radec(hdr, offsets[0], offsets[1], coord1)
 
     # Write
     kcwi_io.write_cube(new_hdr, flux, args.new_cube)
