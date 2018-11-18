@@ -121,6 +121,7 @@ def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False, 
     # Return
     return nbimage
 
+
 def cube_skysub(fil, skyy1, skyy2, skyx1, skyx2, outfil=None):
     hdr, flux = io.open_kcwi_cube(fil)
     # Wavelengths
