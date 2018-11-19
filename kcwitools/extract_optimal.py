@@ -61,8 +61,8 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
 
     # Create slices within wavelength ranges that are good for KCWI
     # From now on only deal with these smaller slices
-    #slices=np.where((wavegrid >=3500.) & (wavegrid <= 5500.))
-    slices=(wavegrid >=3500.) & (wavegrid <= 5500.)
+    #slices=np.where((wavegrid >=3500.) & (wavegrid <= 5550.))
+    slices=(wavegrid >=3500.) & (wavegrid <= 5550.)
 
     flux=fluxcube[slices,:,:]
     wave=wavegrid[slices]
