@@ -14,7 +14,7 @@ def parser(options=None):
     #parser.add_argument("--meta", default=True, help="Show meta data? [default: True]", action="store_true")
     #parser.add_argument("-s", "--select", default=0, type=int, help="Index of spectrum to plot (when multiple exist)")
     parser.add_argument("--outfile", help="Write the image to this data file")
-    parser.add_argument("--wcs", default=False, help="If true plot image in WCS coordinate")
+    parser.add_argument("--wcs", default=False, help="If true plot image in WCS coordinate", action='store_true')
 
 
     if options is None:
@@ -39,10 +39,11 @@ def main(args):
     whiteim = kcwi_img.build_whitelight(hdr, flux, outfile=args.outfile)
 
     # Show
-    if args.wcs != False:
+    if args.wcs is not False:
         head = hdr
+        kcwi_p.show_whitelight(whiteim, header=head)
     else:
-        head = False
+        head = None
         # Show
         kcwi_p.show_whitelight(whiteim, header=head)
 
