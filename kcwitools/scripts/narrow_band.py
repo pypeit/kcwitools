@@ -39,9 +39,9 @@ def main(args):
     nb = kcwi_img.build_narrowband(hdr, flux, args.line, z=args.z, del_wave=args.del_wave,
                                    sub_offimage=args.sub_off,
                                    outfile=args.outfile)
-    if args.wcs != False:
+    if args.wcs is not False:
         head = hdr
     else:
-        head = False
+        head = None
     # Show
     kcwi_p.show_narrowband(nb, header=head)
