@@ -78,6 +78,7 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
         subprocess.Popen(["rm","-rf",outdir+"Input"])
         subprocess.Popen(["rm","-rf",outdir+"Projection"])
         subprocess.Popen(["rm",outdir+"cubes.tbl",outdir+"cubes.hdr",outdir+"cubes-proj.tbl"])
+        subprocess.Popen(["rm",outdir+"*area.fits"])
 
     #fix the header after montage is done
     if grating == 'BL':
