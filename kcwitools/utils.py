@@ -93,7 +93,7 @@ def airtovac(wave):
 
 
 def trim_kcwi_cube_with_header(fluxfile,varfile,size = (66, 25), position = (16.5, 47.5)):
-     """ Trims KCWI datacube to remove bad pixels and reconstructs the header
+    """ Trims KCWI datacube to remove bad pixels and reconstructs the header
 
     Parameters:
     ----------
@@ -107,15 +107,20 @@ def trim_kcwi_cube_with_header(fluxfile,varfile,size = (66, 25), position = (16.
     newflux, newvar :  New trimmed flux and variance cubes
     newhdr_flx,newhrd_var: new updated headers
     """
-
     hdu_hdr,fluxmsky = ki.open_kcwi_cube(fluxfile)
     hdrv,var = ki.open_kcwi_cube(varfile)
     wave = build_wave(hdu_hdr)
+    crval3 = hdu_hdr['CRVAL3']
+    crpix3 = hdu_hdr['CRPIX3']
+    cd3_3 = hdu_hdr['CD3_3']
+    wavedim = hdu_hdr['NAXIS3']
+
+
     
     wavedim, ydim, xdim = fluxmsky.shape
     
-    header =kp.tweak_header(hdu_hdr)
-    headerv =kp.tweak_header(hdrv)
+    header =kp.tweak_header(deepcopy(hdu_hdr))
+    headerv =kp.tweak_header(deepcopy(hdrv))
     
 
     
@@ -129,15 +134,26 @@ def trim_kcwi_cube_with_header(fluxfile,varfile,size = (66, 25), position = (16.
 
     newflux=np.zeros((wavedim,size[0],size[1]))
     newvar=np.zeros((wavedim,size[0],size[1]))
+
+    cutout=Cutout2D(fluxmsky[0,:,:], position, size, wcs=WCS(header))
+    cutout_v=Cutout2D(var[0,:,:], position, size, wcs=WCS(headerv))
+    
+    
+    index=cutout.bbox_original
+    index1=cutout_v.bbox_original
+    
+    newflux=fluxmsky[:,index[0][0]:index[0][1],index[1][0]:index[1][1]]
+    newvar=var[:,index1[0][0]:index1[0][1],index1[1][0]:index1[1][1]]
+
     
     
     
-    for i in range(0,wavedim):
-        cutout = Cutout2D(fluxmsky[i,:,:], position, size, wcs=WCS(header))
-        cutout_v = Cutout2D(var[i,:,:], position, size, wcs=WCS(hdrv))
-        #pdb.set_trace()
-        newflux[i,:,:]=cutout.data
-        newvar[i,:,:]=cutout_v.data
+    #for i in range(0,wavedim):
+    #    cutout = Cutout2D(fluxmsky[i,:,:], position, size, wcs=WCS(header))
+    #    cutout_v = Cutout2D(var[i,:,:], position, size, wcs=WCS(headerv))
+    #    #pdb.set_trace()
+    #    newflux[i,:,:]=cutout.data
+    #    newvar[i,:,:]=cutout_v.data
     
     
     
@@ -152,6 +168,11 @@ def trim_kcwi_cube_with_header(fluxfile,varfile,size = (66, 25), position = (16.
     newhdr_flx['NAXIS2']=size[0]
     newhdr_flx['CRPIX1']=temp['CRPIX1']
     newhdr_flx['CRPIX2']=temp['CRPIX2']
+    newhdr_flx['CRVAL3']=crval3
+    newhdr_flx['CRPIX3']=crpix3
+    newhdr_flx['CD3_3']=cd3_3
+    newhdr_flx['NAXIS3']=wavedim
+
     
     
     newhrd_var=deepcopy(hdrv)
@@ -159,6 +180,11 @@ def trim_kcwi_cube_with_header(fluxfile,varfile,size = (66, 25), position = (16.
     newhrd_var['NAXIS2']=size[0]
     newhrd_var['CRPIX1']=temp1['CRPIX1']
     newhrd_var['CRPIX2']=temp1['CRPIX2']
+    newhrd_var['CRVAL3']=crval3
+    newhrd_var['CRPIX3']=crpix3
+    newhrd_var['CD3_3']=cd3_3
+    newhrd_var['NAXIS3']=wavedim
+
     
     
     
