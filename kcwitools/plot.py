@@ -62,5 +62,8 @@ def tweak_header(header):
         header.remove('CTYPE3')
     if 'CNAME3' in header.keys():
         header.remove('CNAME3')
+    if 'CDELT3' in header.keys():
+        header.remove('CDELT3')
+        
 
     return header
