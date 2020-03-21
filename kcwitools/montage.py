@@ -36,14 +36,14 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
     for fil in infils:
         #check to see if you are trimming, and a BM slicer
         if(trimBM):
-            im.kcwi_cube_trim_BM(fil)
+            trim_medium_premontage(fil)
             a, b = fil.split(".fits")
-            trim = a + '_trimmed.fits'
+            trim = a + '.c.fits'
             subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
         elif(trimBL):
-            im.kcwi_cube_trim_BL(fil)
+            trim_large_premontage(fil)
             a, b = fil.split(".fits")
-            trim = a + '_trimmed.fits'
+            trim = a + '.c.fits'
             subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
         else:
             subprocess.Popen(["cp",fil,outdir+"Input"]).wait()
@@ -78,7 +78,8 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
         subprocess.Popen(["rm","-rf",outdir+"Input"])
         subprocess.Popen(["rm","-rf",outdir+"Projection"])
         subprocess.Popen(["rm",outdir+"cubes.tbl",outdir+"cubes.hdr",outdir+"cubes-proj.tbl"])
-
+        subprocess.Popen(["rm","*.c.fits"])
+        
     #fix the header after montage is done
     if grating == 'BL':
         fix_kcwi_cube_montage_BL(outdir+outfil)
@@ -117,5 +118,11 @@ def fix_kcwi_cube_montage_BM(mosaicfil):
     hdu_out = fits.PrimaryHDU(flux, header=hdu_hdr)
     hdu_out.writeto(mosaicfil, overwrite=True)
 
-
+###Trim the large slicer for montage
+def trim_large_premontage(infil):
+    subprocess.Popen(["cwi_crop","-cube",infil,"-wcrop","3500:5500","-ycrop","17:81","-xcrop","3:26"]).wait()
+    
+###Trim the large slicer for montage
+def trim_medium_premontage(infil):
+    subprocess.Popen(["cwi_crop","-cube",infil,"-wcrop","3500:5500","-ycrop","17:81","-xcrop","6:29"]).wait()
     
