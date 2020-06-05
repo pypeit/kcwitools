@@ -6,11 +6,10 @@ import matplotlib.pyplot as plt
 import warnings
 
 def extract_weighted_spectrum(flux,variance,wave,verbose=False,weights='Gaussian',porder=9):
-        """
-
+    """
     Args:
         flux             : 3D kcwi fluxcube in the aperture of extraction
-        varcube          : 3D KCWI variance cube in the aperture of extraction
+        variance          : 3D KCWI variance cube in the aperture of extraction
         wave             : wavelength of the datacube that is fed in     
         verbose          : [default False]: if set True shows the fitted light profile
         weights          : if = 'Gaussian',fits a Gaussian profile
@@ -22,14 +21,10 @@ def extract_weighted_spectrum(flux,variance,wave,verbose=False,weights='Gaussian
     Returns:
         xspec            : XSpectrum1D object [optimal extraction]
 
-    """ 
-
-    # CHECK CHECK CHECK
-    #THESE VALUES NEED TO BE DOUBLE CHECKED. WHICH ONE SHOULD I USE?
-
-    img=ff.sum(axis=0)
+    """
+    img=flux.sum(axis=0)
     img[img<0] =0
-    amp_init = ff.max()
+    amp_init = flux.max()
     ydim,xdim=img.shape
     stdev_init_x = 0.33 * ydim
     stdev_init_y = 0.33 * xdim
@@ -82,11 +77,11 @@ def extract_weighted_spectrum(flux,variance,wave,verbose=False,weights='Gaussian
     for wv_ii in range(n):
         # n_spaxels = np.sum(mask)
         weights = weights / np.sum(weights)
-        fl[wv_ii] = np.nansum(ff[wv_ii] * weights)  # * n_spaxels
-        sig[wv_ii] = np.sqrt(np.nansum(vv[wv_ii] * (weights ** 2)))  # * n_spaxels
+        fl[wv_ii] = np.nansum(flux[wv_ii] * weights)  # * n_spaxels
+        sig[wv_ii] = np.sqrt(np.nansum(variance[wv_ii] * (weights ** 2)))  # * n_spaxels
         
     # renormalize
-    fl_sum = np.nansum(ff,axis=(1,2))
+    fl_sum = np.nansum(flux,axis=(1,2))
     norm = np.sum(fl_sum) / np.sum(fl)
     fl = fl * norm
     sig = sig * norm
