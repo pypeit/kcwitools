@@ -22,9 +22,20 @@ def extract_weighted_spectrum(flux,variance,wave,verbose=False,weights='Gaussian
         xspec            : XSpectrum1D object [optimal extraction]
 
     """
+    # Sanity Checks
+    q=np.isnan(variance)
+    variance[q]=0.
+    q=variance<0
+    variance[q]=0.
+
+    q=np.isnan(flux)
+    flux[q]=0.
+
     img=flux.sum(axis=0)
     img[img<0] =0
     amp_init = flux.max()
+
+
     ydim,xdim=img.shape
     stdev_init_x = 0.33 * ydim
     stdev_init_y = 0.33 * xdim
@@ -44,7 +55,7 @@ def extract_weighted_spectrum(flux,variance,wave,verbose=False,weights='Gaussian
     with warnings.catch_warnings():
         # Ignore model linearity warning from the fitter
         warnings.simplefilter('ignore')
-        p = fit_g(p_init, xi, yi, img)
+        p = fit_g(g_init, xi, yi, img)
         
     if verbose == True:
         # Plot the data with the best-fit model
