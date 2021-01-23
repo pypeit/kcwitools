@@ -31,6 +31,18 @@ def kcwi_cube_trim_large(infil):
     hdu_out = fits.PrimaryHDU(trimflux, header=hdr)
     hdu_out.writeto(outfil, overwrite=True)
 
+    ###trim off crap parts of larger kcwi cube
+
+def kcwi_cube_trim_BL(infil):
+    hdr, flux = io.open_kcwi_cube(infil)
+    trimflux = flux[:, 15:81, 2:26]  # note that python reads arrays weird.  Trim *down in y* then x.
+
+    a, b = infil.split(".fits")
+    outfil = a + '_trimmed.fits'
+
+    hdu_out = fits.PrimaryHDU(trimflux, header=hdr)
+    hdu_out.writeto(outfil, overwrite=True)
+
 
 def build_whitelight(hdr, flux, minwave=3600., maxwave=5500., outfile=None):
     """
