@@ -4,7 +4,7 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.polynomial.chebyshev import chebfit,chebval
-import pdb
+import ipdb
 
 
 
@@ -76,16 +76,16 @@ def spatial_profile( fluxcube, varcube, aperture_mask, wavelength, order, apertu
 
         wavelength_fits[:, i, j]=polynomial
 
-    if plot is True:
-        for i, j in zip(aperture_indices[0], aperture_indices[1]):
-            plt.plot(wavelength, wavelength_fits[:, :])
+    #if plot is True:
+    #    for i, j in zip(aperture_indices[0], aperture_indices[1]):
+    #        plt.plot(wavelength, wavelength_fits[:, :])
 
-        plt.show()
+    #    plt.show()
 
     if verbose is True:
         print("Normalising Spatially")
     #Normalise spatially
-    spatial_norm=np.sum(np.sum(wavelength_fits, axis=2), axis=1)
+    spatial_norm=np.nansum(np.nansum(wavelength_fits, axis=2), axis=1)
 
     # This is the P(x, lambda) value from Horne 1986 in 3D
     mcube=wavelength_fits/spatial_norm[:, np.newaxis, np.newaxis]

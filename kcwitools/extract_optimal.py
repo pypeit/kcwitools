@@ -12,7 +12,8 @@ from kcwitools import image
 from linetools.spectra.xspectrum1d import XSpectrum1D
 
 
-def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,outfile=None,verbose=False,plot=False):
+def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,outfile=None,verbose=False,plot=False,
+        instrument = 'kcwi',gain = 1.0842,rdnoise =1.94):
     """
 
     Args:
@@ -27,6 +28,9 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
                           FITS file name
         verbose [False]  : optional, prints information on terminal
         plot [False]     : optional plots diagnostic stuff
+        instrument [kcwi] : optional to generalize for all IFUs
+        gain= optional gain value for extraction
+        rdnoise= optional readnoise for extraction
     
     Returns:
         xspec            : XSpectrum1D object [optimal extraction]
@@ -37,19 +41,31 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
     # CHECK CHECK CHECK
     #THESE VALUES NEED TO BE DOUBLE CHECKED. WHICH ONE SHOULD I USE?
 
-
-    val= defs.defs(header)
-
-    gain=val['gain']
-    rdnoise=val['rdnoise']  #  Don't know this value. Please instruct what should I read in here?
-
-    # PLEASE CHECK THAT THIS IS NOT BONKERS
-    if val['BIASSUB'] == 'T':  # If read noise has already been subtracted 
-        rdnoise = 0.    
-
-
     # Wavelength
     wavegrid = utils.build_wave(header)
+
+    if instrument == 'kcwi':
+        wmin=3500.
+        wmax=5500.
+        val= defs.defs(header)
+        gain=val['gain']
+        rdnoise=val['rdnoise']  #  Don't know this value. Please instruct what should I read in here?
+        # PLEASE CHECK THAT THIS IS NOT BONKERS
+        if val['BIASSUB'] == 'T':  # If read noise has already been subtracted 
+            rdnoise = 0.    
+    else:
+        wmin=min(wavegrid)
+        wmax=max(wavegrid)
+
+
+
+
+
+    # Create slices within wavelength ranges that are good for KCWI
+    # From now on only deal with these smaller slices
+    #slices=np.where((wavegrid >=3500.) & (wavegrid <= 5500.))
+    slices=(wavegrid >=wmin) & (wavegrid <= wmax)
+
 
     # Expand the four corners of the pseudo-slit
     x1=corners[0]
@@ -63,6 +79,7 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
     # From now on only deal with these smaller slices
     #slices=np.where((wavegrid >=3500.) & (wavegrid <= 5550.))
     slices=(wavegrid >=3500.) & (wavegrid <= 5550.)
+
 
     flux=fluxcube[slices,:,:]
     wave=wavegrid[slices]
@@ -116,7 +133,7 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
 
 
     # Do a boxcar extraction
-    spec=np.sum(np.sum(cube, axis=2), axis=1)
+    spec=np.nansum(np.nansum(cube, axis=2), axis=1)
     var=var_origin+rdnoise**2
 
 
@@ -127,8 +144,8 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
     varbad=(~np.isfinite(var))
     var[varbad]=np.inf
 
-    sum_spec=np.sum(np.sum(aperture_mask*cube, axis=2), axis=1)
-    sum_err= np.sqrt(np.abs(np.sum(np.sum(var,axis=2),axis=1)))
+    sum_spec=np.nansum(np.nansum(aperture_mask*cube, axis=2), axis=1)
+    sum_err= np.sqrt(np.abs(np.nansum(np.nansum(var,axis=2),axis=1)))
 
 
 
@@ -158,8 +175,8 @@ def extract_optimal_1D(fluxcube, varcube,header,corners,sigma=5,fit_order = 200,
 
         if verbose is True:
             print("\n\nEXTRACTING OPTIMAL SPECTRUM\n")
-        spec=np.sum(np.sum(aperture_mask*cube*mcube/var, axis=2), axis=1)/np.sum(np.sum(aperture_mask*mcube*mcube/var, axis=2), axis=1)
-        vspec=np.sum(np.sum(aperture_mask*mcube, axis=2), axis=1)/np.sum(np.sum(aperture_mask*mcube*mcube/var , axis=2), axis=1)
+        spec=np.nansum(np.nansum(aperture_mask*cube*mcube/var, axis=2), axis=1)/np.sum(np.sum(aperture_mask*mcube*mcube/var, axis=2), axis=1)
+        vspec=np.nansum(np.nansum(aperture_mask*mcube, axis=2), axis=1)/np.sum(np.sum(aperture_mask*mcube*mcube/var , axis=2), axis=1)
         c+=1
 
     # Object

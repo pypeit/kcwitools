@@ -4,6 +4,13 @@ import numpy as np
 
 from astropy import units
 import subprocess
+from astropy.io import fits
+from astropy.wcs import WCS
+from astropy.nddata import Cutout2D
+from copy import deepcopy
+from kcwitools import io as ki
+from kcwitools import plot as kp
+
 
 def build_wave(hdu_hdr, air2vac=True):
     """
@@ -20,7 +27,8 @@ def build_wave(hdu_hdr, air2vac=True):
     cd3_3 = hdu_hdr['CD3_3']
     wavedim = hdu_hdr['NAXIS3']
     # Do it
-    wave = crval3 + (crpix3 + np.arange(0, wavedim, 1.0)) * cd3_3
+    #wave = crval3 + (crpix3 + np.arange(0, wavedim, 1.0)) * cd3_3
+    wave = crval3 + cd3_3 * (np.arange(wavedim) + 1. - crpix3)
     # Air2vac?
     if air2vac:
         wave = airtovac(wave)
@@ -55,3 +63,100 @@ def airtovac(wave):
     wavelength = wavelength*factor
 
     return wavelength
+
+
+def trim_kcwi_cube_with_header(fluxfile,varfile,size = (66, 25), position = (16.5, 47.5)):
+    """ Trims KCWI datacube to remove bad pixels and reconstructs the header
+
+    Parameters:
+    ----------
+    fluxfile  : name of the flux file
+    varfile   : name of the variance file 
+    size= (y,x) size of the cutout image in pixels
+    position = (y,x) central position of the cutout in pixels
+
+    Returns:
+    ----------
+    newflux, newvar :  New trimmed flux and variance cubes
+    newhdr_flx,newhrd_var: new updated headers
+    """
+    hdu_hdr,fluxmsky = ki.open_kcwi_cube(fluxfile)
+    hdrv,var = ki.open_kcwi_cube(varfile)
+    wave = build_wave(hdu_hdr)
+    crval3 = hdu_hdr['CRVAL3']
+    crpix3 = hdu_hdr['CRPIX3']
+    cd3_3 = hdu_hdr['CD3_3']
+    wavedim = hdu_hdr['NAXIS3']
+
+
+    
+    wavedim, ydim, xdim = fluxmsky.shape
+    
+    header =kp.tweak_header(deepcopy(hdu_hdr))
+    headerv =kp.tweak_header(deepcopy(hdrv))
+    
+
+    
+    q=np.isnan(fluxmsky)
+    fluxmsky[q]=0.
+    qq=np.isnan(var)
+    fluxmsky[q]=0.
+    #position = (16.5, 47.5)
+    #size = (66, 25)     # pixels
+
+
+    newflux=np.zeros((wavedim,size[0],size[1]))
+    newvar=np.zeros((wavedim,size[0],size[1]))
+
+    cutout=Cutout2D(fluxmsky[0,:,:], position, size, wcs=WCS(header))
+    cutout_v=Cutout2D(var[0,:,:], position, size, wcs=WCS(headerv))
+    
+    
+    index=cutout.bbox_original
+    index1=cutout_v.bbox_original
+    
+    newflux=fluxmsky[:,index[0][0]:index[0][1],index[1][0]:index[1][1]]
+    newvar=var[:,index1[0][0]:index1[0][1],index1[1][0]:index1[1][1]]
+
+    
+    
+    
+    #for i in range(0,wavedim):
+    #    cutout = Cutout2D(fluxmsky[i,:,:], position, size, wcs=WCS(header))
+    #    cutout_v = Cutout2D(var[i,:,:], position, size, wcs=WCS(headerv))
+    #    #pdb.set_trace()
+    #    newflux[i,:,:]=cutout.data
+    #    newvar[i,:,:]=cutout_v.data
+    
+    
+    
+    # Construct new header
+    
+    temp=cutout.wcs.to_header()
+    temp1=cutout_v.wcs.to_header()
+
+    
+    newhdr_flx=deepcopy(hdu_hdr)
+    newhdr_flx['NAXIS1']=size[1]
+    newhdr_flx['NAXIS2']=size[0]
+    newhdr_flx['CRPIX1']=temp['CRPIX1']
+    newhdr_flx['CRPIX2']=temp['CRPIX2']
+    newhdr_flx['CRVAL3']=crval3
+    newhdr_flx['CRPIX3']=crpix3
+    newhdr_flx['CD3_3']=cd3_3
+    newhdr_flx['NAXIS3']=wavedim
+
+    
+    
+    newhrd_var=deepcopy(hdrv)
+    newhrd_var['NAXIS1']=size[1]
+    newhrd_var['NAXIS2']=size[0]
+    newhrd_var['CRPIX1']=temp1['CRPIX1']
+    newhrd_var['CRPIX2']=temp1['CRPIX2']
+    newhrd_var['CRVAL3']=crval3
+    newhrd_var['CRPIX3']=crpix3
+    newhrd_var['CD3_3']=cd3_3
+    newhrd_var['NAXIS3']=wavedim
+
+        
+    return newflux,newvar,newhdr_flx,newhrd_var
