@@ -160,3 +160,61 @@ def trim_kcwi_cube_with_header(fluxfile,varfile,size = (66, 25), position = (16.
 
         
     return newflux,newvar,newhdr_flx,newhrd_var
+
+
+
+
+def build_moment_map(hdr, flux, line, z=None, del_wave=2.0):
+""" Simple 1st moment of an emission line to compute velocity
+
+    Parameters:
+    ----------
+    hdr    : header of the file needed
+    flux   : flux datacube matrix
+    line   : rest frame wavelength of line center
+    z      : line redshift [defult 0]
+    del_wave: delta wavelength window within which 1st moment is computed
+
+    Returns:
+    ----------
+    nbimage: new image with 1st moment map
+    """
+
+    # Rest wave
+    if z is None:
+        z = 0.
+    # Wavelengths
+    wave = utils.build_wave(hdr)
+    wrest = wave/(1+z)
+
+    header =kp.tweak_header(deepcopy(hdr))
+    #Modify and sum data to be in units of 10^-16 (erg/s/cm2/arcsec2)
+    plate_scale = proj_plane_pixel_scales(WCS(header))
+    plate_scale*= 3600. #arcsec
+    pixArea = plate_scale[0]*plate_scale[1] #area in arcsec^2
+    dLambda = del_wave
+
+
+    # Work out the slices for the on-band image:
+    slices = np.abs(wrest - line) < del_wave
+    
+    wave_grid=wrest[slices]
+    flux_cube=flux[slices, :, :]
+    
+    nbimage=np.zeros((np.shape(flux_cube)[1],np.shape(flux_cube)[2]))
+    z=  (wave_grid/line) -1.#;
+    C = 299792.458#;  % speed of light [km/sec]
+    Beta = ((z+1.)**2. - 1.)/(1. + (z+1.)**2.);
+    del_v = Beta*C;
+
+
+
+    for i in range(0,(np.shape(flux_cube)[1])):
+        for j in range(0,(np.shape(flux_cube)[2])):
+            # Make the on-band and two off-band images
+            nbimage[i,j] = np.trapz(del_v*flux_cube[:,i,j],x=del_v,axis=0)
+    
+
+    return (nbimage)
+
+
