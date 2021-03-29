@@ -20,7 +20,8 @@ def build_wave(hdu_hdr, air2vac=True):
     cd3_3 = hdu_hdr['CD3_3']
     wavedim = hdu_hdr['NAXIS3']
     # Do it
-    wave = crval3 + (crpix3 + np.arange(0, wavedim, 1.0)) * cd3_3
+    #wave = crval3 + (crpix3 + np.arange(0, wavedim, 1.0)) * cd3_3
+    wave = crval3 + cd3_3 * (np.arange(wavedim) + 1. - crpix3)
     # Air2vac?
     if air2vac:
         wave = airtovac(wave)
