@@ -165,7 +165,7 @@ def trim_kcwi_cube_with_header(fluxfile,varfile,size = (66, 25), position = (16.
 
 
 def build_moment_map(hdr, flux, line, z=None, del_wave=2.0):
-""" Simple 1st moment of an emission line to compute velocity
+    """ Simple 1st moment of an emission line to compute velocity
 
     Parameters:
     ----------
