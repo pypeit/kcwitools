@@ -52,7 +52,7 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
             a, b = fil.split(".fits")
             trim = a + '.c.fits'
             #fix_kcwi_cube_montage_BL(trim)
-            #subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
+            subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
             #BL and small slicer
 
         else:
@@ -107,12 +107,12 @@ def fix_kcwi_cube_montage_BL(mosaicfil):
     crval3 = hdu_hdr['CRVAL3']
     crpix3 = hdu_hdr['CRPIX3']
     
-    #cdelt3 = hdu_hdr['CDELT3']
+    cdelt3 = hdu_hdr['CDELT3']
     #Make it so that there is no offset (shift zeropint and zero the offset)
-    hdu_hdr['CRVAL3'] = crval3 - crpix3
-    hdu_hdr['CRPIX3'] = 0.0
-    hdu_hdr['CDELT3'] = 1.0
-    hdu_hdr['CD3_3'] = 1.0
+    #hdu_hdr['CRVAL3'] = crval3 - crpix3
+    #hdu_hdr['CRPIX3'] = 0.0
+    #hdu_hdr['CDELT3'] = 1.0
+    #hdu_hdr['CD3_3'] = 1.0
     
 
     hdu_out = fits.PrimaryHDU(flux, header=hdu_hdr)
