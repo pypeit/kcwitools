@@ -12,7 +12,7 @@ import subprocess
 import os
 
 def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
-                trimBL=False,trimBM=False,grating='BL',clean=False,wl=3500,wh=5500):
+                trimBL=False,trimBM=False,trimBL_Small=False,grating='BL',clean=False,wl=3500,wh=5500):
     """ take a list of KCWI cubes and run montage on them
     Args:
     ----------
@@ -46,6 +46,15 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
             trim = a + '.c.fits'
             fix_kcwi_cube_montage_BL(trim)
             subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
+            #BL and small slicer
+        elif(trimBL_Small):
+            trim_small_premontage(fil,wl,wh)
+            a, b = fil.split(".fits")
+            trim = a + '.c.fits'
+            #fix_kcwi_cube_montage_BL(trim)
+            #subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
+            #BL and small slicer
+
         else:
             subprocess.Popen(["cp",fil,outdir+"Input"]).wait()
 
@@ -133,4 +142,9 @@ def trim_large_premontage(infil,wl,wh):
 ###Trim the medium slicer for montage
 def trim_medium_premontage(infil,wl,wh):
     subprocess.Popen(["cwi_crop","-cube",infil,"-wcrop",str(wl)+":"+str(wh),"-ycrop","17:81","-xcrop","6:29"]).wait()
-    
+
+ 
+###Trim the small slicer for montage
+def trim_small_premontage(infil,wl,wh):
+    subprocess.Popen(["cwi_crop","-cube",infil,"-wcrop",str(wl)+":"+str(wh),"-ycrop","25:164","-xcrop","13:35"]).wait()
+       
