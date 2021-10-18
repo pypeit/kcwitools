@@ -10,6 +10,7 @@ from kcwitools import image as im
 
 import subprocess
 import os
+import pdb
 
 def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
                 trimBL=False,trimBM=False,trimBL_Small=False,grating='BL',clean=False,wl=3500,wh=5500):
@@ -35,23 +36,23 @@ def run_montage(infils,outdir='Montage/',outfil="Montage.fits",northup=False,
     #copy
     for fil in infils:
         #check to see if you are trimming, and a BM slicer
-        if(trimBM):
+        if(trimBM==True):
             trim_medium_premontage(fil,wl,wh)
             a, b = fil.split(".fits")
             trim = a + '.c.fits'
             subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
-        elif(trimBL):
+        elif(trimBL==True):
             trim_large_premontage(fil,wl,wh)
             a, b = fil.split(".fits")
             trim = a + '.c.fits'
             fix_kcwi_cube_montage_BL(trim)
             subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
             #BL and small slicer
-        elif(trimBL_Small):
+        elif(trimBL_Small==True):
             trim_small_premontage(fil,wl,wh)
             a, b = fil.split(".fits")
             trim = a + '.c.fits'
-            #fix_kcwi_cube_montage_BL(trim)
+            fix_kcwi_cube_montage_BL(trim)
             subprocess.Popen(["cp",trim,outdir+"Input"]).wait()
             #BL and small slicer
 
@@ -107,16 +108,21 @@ def fix_kcwi_cube_montage_BL(mosaicfil):
     crval3 = hdu_hdr['CRVAL3']
     crpix3 = hdu_hdr['CRPIX3']
     
-    cdelt3 = hdu_hdr['CDELT3']
+    #cdelt3 = hdu_hdr['CDELT3']
     #Make it so that there is no offset (shift zeropint and zero the offset)
     #hdu_hdr['CRVAL3'] = crval3 - crpix3
-    #hdu_hdr['CRPIX3'] = 0.0
-    #hdu_hdr['CDELT3'] = 1.0
-    #hdu_hdr['CD3_3'] = 1.0
+    if hdu_hdr['IFUNAM']=='Small   ':
+        hdu_hdr['CDELT3'] = 0.5
+        hdu_hdr['CD3_3'] = 0.5
+    else:
+        hdu_hdr['CDELT3'] = 1.0
+        hdu_hdr['CD3_3'] = 1.0
+    pdb.set_trace()
     
 
     hdu_out = fits.PrimaryHDU(flux, header=hdu_hdr)
     hdu_out.writeto(mosaicfil, overwrite=True)
+    print('Written')
 
 
 ###Add the CD3_3 and CDELT3 keywords to a BM grating cube
