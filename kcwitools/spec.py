@@ -74,10 +74,14 @@ def extract_rectangle(xcen, ycen, wave, flux, var, deltax=5,deltay=5, outfile=No
 
     """
 
+    x_halfbox = (deltax-1)//2
+    y_halfbox= (deltay-1)//2
+
+
 
     # create an error array assuming poisson noise for flux
-    sub_flux = flux[:, ycen-deltay:ycen+deltay, xcen-deltax:xcen+deltax]
-    sub_var = var[:, deltay:ycen+deltay, xcen-deltax:xcen+deltax]
+    sub_flux = flux[:, ycen-y_halfbox:ycen+y_halfbox+1, xcen-x_halfbox:xcen+x_halfbox+1]
+    sub_var = var[:, y_halfbox:ycen+y_halfbox+1, xcen-x_halfbox:xcen+x_halfbox+1]
 
     spec = np.nansum(sub_flux, axis=(1,2))
     err_spec = np.sqrt(np.sum(sub_var, axis=(1,2)))
