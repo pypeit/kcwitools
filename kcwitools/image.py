@@ -63,7 +63,7 @@ def build_whitelight(hdr, flux, minwave=3600., maxwave=5500., outfile=None):
     plate_scale = proj_plane_pixel_scales(WCS(header))
     plate_scale*= 3600. #arcsec
     pixArea = plate_scale[0]*plate_scale[1] #area in arcsec^2
-    dLambda = (maxwave-minwave)
+    dLambda = wave[2]-wave[1]#(maxwave-minwave)
 
 
     whiteim = np.sum(flux[slices,:,:], axis=0)
@@ -121,7 +121,7 @@ def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False, 
     plate_scale = proj_plane_pixel_scales(WCS(header))
     plate_scale*= 3600. #arcsec
     pixArea = plate_scale[0]*plate_scale[1] #area in arcsec^2
-    dLambda = del_wave
+    dLambda = wave[2]-wave[1]#del_wave delta_lambda_per_pixel
 
 
     # Work out the slices for the on-band image:
@@ -141,6 +141,8 @@ def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False, 
     low = np.sum(flux[slice_low, :, :], 0)
     
     # convert units
+    # If flambda is in units of erg s^-1 cm^-2 A^-1 
+    # get SB in units of erg s^-1 cm^-2 arcsec^-2
     nbimage /= pixArea
     nbimage *= dLambda  
 
