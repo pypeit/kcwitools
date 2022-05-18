@@ -89,7 +89,7 @@ def extract_weighted_spectrum(flux,variance,wave,verbose=False,weights='Gaussian
         # n_spaxels = np.sum(mask)
         weights = weights / np.sum(weights)
         fl[wv_ii] = np.nansum(flux[wv_ii] * weights)  # * n_spaxels
-        sig[wv_ii] = np.sqrt(np.nansum(variance[wv_ii] * (weights ** 2)))  # * n_spaxels
+        sig[wv_ii] = np.sqrt(np.nansum(variance[wv_ii] * (weights)**2))  # * n_spaxels
         
     # renormalize
     fl_sum = np.nansum(flux,axis=(1,2))
