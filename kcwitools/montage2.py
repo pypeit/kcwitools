@@ -8,11 +8,8 @@ from astropy.table import Table
 from kcwitools import image as im
 import subprocess
 import os
-import shutil
-from MontagePy.main import *
-from MontagePy.archive import *
 
-from cwitools.scripts import cwi_crop 
+#from cwitools.scripts import cwi_crop as crop
 
 
 
@@ -32,10 +29,10 @@ def pyfil_strip(infil,flux=True):
         a, b = infil.split(".fits")
         outfil = a+'_flux.fits'
         fits.writeto(outfil,fdata,fhdr)
-    else:      
+    else:
+        fits.writeto(outfil,vdata,vhdr)
         a, b = infil.split(".fits")
         outfil = a+'_var.fits'
-        fits.writeto(outfil,vdata,vhdr)
     return
 
 def fix_kcwi_cube_pre_montage(infil):  #to make sure cdelt3 is populated
@@ -102,9 +99,8 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
 
 
     print("Work directory: " + workdir, flush=True)
-    #--------------------
+
     #make the directories in the nested structure
-    #Check if workdir exists if not do the following commands
     os.makedirs(workdir)  
     os.chdir(workdir)
     os.makedirs("raw")
@@ -112,7 +108,6 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
 
     #need to come back, to see the files
     os.chdir(home)
-    #--------------------
     
     #now fix,strip (if needed), and trim and fill up the raw montage directories
     for fil in infils:
@@ -125,26 +120,22 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
                 a, b = fil.split(".fits")
 
                 if(trim):
-                    trim_premontage(a+'_flux.fits',wc1=3400,wc2=5500,
+                    trim_premontage(a+'_flux.fits',wc1=3500,wc2=5500,
                                         xc1=6,xc2=29,yc1=17,yc2=81)
                     trim = a + '_flux.c.fits'
-                    fix_kcwi_cube_pre_montage(trim)
                     shutil.move(trim,workdir+'/raw/')
                 else:
-                    fix_kcwi_cube_pre_montage(a+'_flux.fits')
                     shutil.move(a+'_flux.fits',workdir+'/raw/')
             else:
-                pyfil_strip(fil,flux=False)
+                pyfil_strip(fil,var=True)
                 a, b = fil.split(".fits")
 
                 if(trim):
                     trim_premontage(a+'var.fits',wc1=3500,wc2=5500,
                                         xc1=6,xc2=29,yc1=17,yc2=81)
                     trim = a + '_var.c.fits'
-                    fix_kcwi_cube_pre_montage(trim)
                     shutil.move(trim,workdir+'/raw/')
                 else:
-                    fix_kcwi_cube_pre_montage(a+'_var.fits')
                     shutil.move(a+'_var.fits',workdir+'/raw/')
         else:
            if(trim):
@@ -152,10 +143,8 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
                                xc1=6,xc2=29,yc1=17,yc2=81)
                a, b = fil.split(".fits")
                trim = a + '.c.fits'
-               fix_kcwi_cube_pre_montage(trim)
                shutil.move(trim,workdir+'/raw/')
            else:
-               fix_kcwi_cube_pre_montage(fil)
                shutil.move(fil,workdir+'/raw/')
                
     #now get to work on the montage routines
@@ -192,5 +181,3 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
 
     os.chdir(home)
     print("all done!!!")
-
-
