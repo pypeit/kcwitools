@@ -87,7 +87,7 @@ def build_whitelight(hdr, flux, minwave=3600., maxwave=5500., outfile=None):
     return whiteim
 
 
-def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False, outfile=None):
+def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False, outfile=None,method='Sum'):
     """
     Generate a narrow band image at a given wavelength
 
@@ -135,10 +135,16 @@ def build_narrowband(hdr, flux, line, z=None, del_wave=2.0, sub_offimage=False, 
     slice_high = np.where((wrest >= (line + del_wave)) &
                           (wrest < (line + del_wave + offimage_width)))[0]
 
-    # Make the on-band and two off-band images
-    nbimage = np.sum(flux[slices, :, :], 0)
-    high = np.sum(flux[slice_high, :, :], 0)
-    low = np.sum(flux[slice_low, :, :], 0)
+    
+    if method=='Sum':
+        # Make the on-band and two off-band images
+        nbimage = np.sum(flux[slices, :, :], 0)
+        high = np.sum(flux[slice_high, :, :], 0)
+        low = np.sum(flux[slice_low, :, :], 0)
+    elif method=='Mean':
+        nbimage = np.nanmean(flux[slices, :, :], 0)
+        high = np.nanmean(flux[slice_high, :, :], 0)
+        low = np.nanmean(flux[slice_low, :, :], 0)
     
     # convert units
     # If flambda is in units of erg s^-1 cm^-2 A^-1 
