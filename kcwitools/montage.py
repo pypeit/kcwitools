@@ -14,7 +14,7 @@ from MontagePy.archive import *
 
 from cwitools.scripts import cwi_crop 
 
-
+import pdb
 
 #if it's from the python pipeline, create Flux and Variance arrays that are
 #separate
@@ -25,7 +25,7 @@ def pyfil_strip(infil,flux=True):
     fhdr = pyfil[0].header    #pull flux header and data
     fdata = pyfil[0].data
 
-    vhdr = pyfil[2].header    #pull variance header and data
+    vhdr = pyfil[0].header    #pull variance header and data
     vdata = pyfil[2].data
     
     if(flux):
@@ -95,20 +95,24 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
         home = os.getcwd()
     print("Startup folder: " + home)
 
-    try:
-        shutil.rmtree(workdir)
-    except:
-        print("                Can't delete work tree; probably doesn't exist yet", flush=True)
+    #try:
+    #    shutil.rmtree(workdir)
+    #except:
+    #    print("                Can't delete work tree; probably doesn't exist yet", flush=True)
 
 
     print("Work directory: " + workdir, flush=True)
     #--------------------
     #make the directories in the nested structure
     #Check if workdir exists if not do the following commands
-    os.makedirs(workdir)  
-    os.chdir(workdir)
-    os.makedirs("raw")
-    os.makedirs("projected")
+
+    #Check if workdir exists if not create it
+
+    if os.path.isdir(workdir)==False:
+        os.makedirs(workdir)  
+        os.chdir(workdir)
+        os.makedirs("raw")
+        os.makedirs("projected")
 
     #need to come back, to see the files
     os.chdir(home)
@@ -116,6 +120,7 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
     
     #now fix,strip (if needed), and trim and fill up the raw montage directories
     for fil in infils:
+        print(fil)
         #fix_kcwi_cube_pre_montage(fil)
         #check to see if a python pipeline cube
         if (pycube):
@@ -125,7 +130,7 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
                 a, b = fil.split(".fits")
 
                 if(trim):
-                    trim_premontage(a+'_flux.fits',wc1=3400,wc2=5500,
+                    trim_premontage(a+'_flux.fits',wc1=wc1,wc2=wc2,
                                         xc1=6,xc2=29,yc1=17,yc2=81)
                     trim = a + '_flux.c.fits'
                     fix_kcwi_cube_pre_montage(trim)
@@ -138,7 +143,7 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
                 a, b = fil.split(".fits")
 
                 if(trim):
-                    trim_premontage(a+'var.fits',wc1=3500,wc2=5500,
+                    trim_premontage(a+'_var.fits',wc1=wc1,wc2=wc2,
                                         xc1=6,xc2=29,yc1=17,yc2=81)
                     trim = a + '_var.c.fits'
                     fix_kcwi_cube_pre_montage(trim)
@@ -148,7 +153,7 @@ def run_montage(infils,outfil="Montage.fits",northup=False,trim=True,
                     shutil.move(a+'_var.fits',workdir+'/raw/')
         else:
            if(trim):
-               trim_premontage(fil,wc1=3500,wc2=5500,
+               trim_premontage(fil,wc1=wc1,wc2=wc2,
                                xc1=6,xc2=29,yc1=17,yc2=81)
                a, b = fil.split(".fits")
                trim = a + '.c.fits'
