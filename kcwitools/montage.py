@@ -14,7 +14,6 @@ from MontagePy.archive import *
 
 from cwitools.scripts import cwi_crop 
 
-import pdb
 
 #if it's from the python pipeline, create Flux and Variance arrays that are
 #separate
@@ -26,6 +25,7 @@ def pyfil_strip(infil,flux=True):
     fdata = pyfil[0].data
 
     vhdr = pyfil[0].header    #pull variance header and data
+    #RB hack: the *icubes.fits files don't have a valid variance header. Using flux header instead.
     vdata = pyfil[2].data
     
     if(flux):
