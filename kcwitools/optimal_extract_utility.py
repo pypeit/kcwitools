@@ -4,7 +4,7 @@ from __future__ import print_function, absolute_import, division, unicode_litera
 import numpy as np
 import matplotlib.pyplot as plt
 from numpy.polynomial.chebyshev import chebfit,chebval
-import ipdb
+import pdb
 
 
 

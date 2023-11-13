@@ -51,11 +51,12 @@ def extract_weighted_spectrum(flux,variance,wave,verbose=False,weights='Gaussian
 
     yi, xi = np.indices(img.shape)
 
-    fit_g = fitting.LevMarLSQFitter()
-    with warnings.catch_warnings():
-        # Ignore model linearity warning from the fitter
-        warnings.simplefilter('ignore')
-        p = fit_g(g_init, xi, yi, img)
+    if weights!= 'Data':
+        fit_g = fitting.LevMarLSQFitter()
+        with warnings.catch_warnings():
+            # Ignore model linearity warning from the fitter
+            warnings.simplefilter('ignore')
+            p = fit_g(g_init, xi, yi, img)
         
     if verbose == True:
         # Plot the data with the best-fit model
